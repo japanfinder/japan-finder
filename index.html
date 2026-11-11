@@ -36,7 +36,7 @@ textarea:focus,select:focus,input:focus{border-color:#739985;box-shadow:0 0 0 3p
 textarea{min-height:94px;resize:vertical}.field+.field{margin-top:17px}
 .choices{display:flex;gap:8px}.choice{flex:1;border:1px solid var(--line);background:white;padding:12px 10px;border-radius:11px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted)}.choice.active{border-color:var(--green);background:var(--mint);color:var(--green)}
 .hint{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.6}
-.search-btn{margin-top:23px;width:100%;border:0;border-radius:12px;padding:16px;background:var(--green);color:white;font-size:13px;font-weight:800;letter-spacing:.03em;cursor:pointer;transition:.2s}.search-btn:hover{background:#194532;transform:translateY(-1px)}
+.identify-btn{margin-top:12px;border:1px solid var(--green);border-radius:11px;padding:13px 16px;background:#f0f6f1;color:var(--green);font-weight:800;font-size:12px;cursor:pointer;width:100%}.identify-btn:disabled{opacity:.6;cursor:wait}.search-btn{margin-top:23px;width:100%;border:0;border-radius:12px;padding:16px;background:var(--green);color:white;font-size:13px;font-weight:800;letter-spacing:.03em;cursor:pointer;transition:.2s}.search-btn:hover{background:#194532;transform:translateY(-1px)}
 .results{display:none;margin-top:24px;border-top:1px solid var(--line);padding-top:22px}.results.show{display:block}.result-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.result-head h3{margin:0;font-size:17px}.demo-tag{font-size:10px;background:#fff4df;color:#8b6422;border-radius:99px;padding:7px 10px;font-weight:800}
 .result-card{border:1px solid var(--line);border-radius:14px;padding:15px;display:flex;gap:15px;align-items:center;margin-top:10px}.result-icon{width:66px;height:66px;background:#f1f4f0;border-radius:10px;display:grid;place-items:center;font-size:28px;flex-shrink:0}.result-info{flex:1}.result-info strong{font-size:13px}.result-info p{font-size:11px;color:var(--muted);margin:5px 0}.result-link{background:var(--mint);border-radius:10px;color:var(--green);text-decoration:none;font-size:12px;font-weight:800;padding:12px;white-space:nowrap}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.step{background:white;border:1px solid var(--line);border-radius:16px;padding:20px}.step-num{font-size:11px;color:var(--green);font-weight:850;letter-spacing:.12em}.step h3{font-size:15px;margin:12px 0 7px}.step p{font-size:12px;line-height:1.7;color:var(--muted);margin:0}
@@ -56,7 +56,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
  <div class="section-head"><div><div class="eyebrow">Start your search</div><h2>What are you looking for?</h2><p>Upload a photo and tell us what you know. The more details, the better.</p></div></div>
  <div class="search-panel">
   <div class="form-grid">
-   <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint">Your photo stays in this browser. Automatic image identification is not connected yet.</div></div>
+   <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint" id="photoHint">Photo recognition uses Google Cloud Vision when configured. Your selected image is sent to the recognition service only when you click “Identify photo”.</div><button class="identify-btn" id="identifyBtn" type="button">✦ IDENTIFY PHOTO WITH AI</button><div class="hint" id="identifyStatus" role="status" aria-live="polite">AI recognition requires a server-side API configuration.</div></div>
    <div>
     <div class="field"><label for="details">2. Product name or clues</label><textarea id="details" placeholder="Enter the product name, brand, color, or any details you know..."></textarea></div>
     <div class="field"><span class="field-title">3. Product condition</span><div class="choices" id="condition"><button class="choice" data-value="New" type="button">New</button><button class="choice" data-value="Used" type="button">Used</button><button class="choice active" data-value="Both" type="button">Both</button></div></div>
@@ -70,11 +70,11 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
  </div>
 </section>
 <section class="wrap section" id="how"><div class="section-head"><div><div class="eyebrow">Simple by design</div><h2>How it works</h2><p>From a photo to a place to buy in three simple steps.</p></div></div>
- <div class="steps"><article class="step"><div class="step-num">STEP 01</div><h3>Share a photo</h3><p>Upload an image to preview the item. Automatic photo recognition is planned for a future version.</p></article><article class="step"><div class="step-num">STEP 02</div><h3>Choose your preference</h3><p>Choose new or used products, set a budget, and add a product name or clues.</p></article><article class="step"><div class="step-num">STEP 03</div><h3>Discover your options</h3><p>Open relevant searches on Amazon Japan, Mercari, and Yahoo! Flea Market.</p></article></div>
+ <div class="steps"><article class="step"><div class="step-num">STEP 01</div><h3>Share a photo</h3><p>Upload an image to preview the item. Use AI to suggest a product name when recognition is configured.</p></article><article class="step"><div class="step-num">STEP 02</div><h3>Choose your preference</h3><p>Choose new or used products, set a budget, and add a product name or clues.</p></article><article class="step"><div class="step-num">STEP 03</div><h3>Discover your options</h3><p>Open relevant searches on Amazon Japan, Mercari, and Yahoo! Flea Market.</p></article></div>
 </section>
 <section class="wrap section" id="about" style="padding-top:0"><div style="background:#edf3ee;border-radius:20px;padding:25px 28px"><div class="eyebrow">Our idea</div><h2 style="font-size:23px;margin:10px 0">Japan is full of things worth finding.</h2><p style="font-size:13px;line-height:1.8;color:#58675e;max-width:700px;margin:0">JAPAN FINDER aims to make discovering Japanese products easier for people everywhere — even when all they have is a picture.</p></div></section>
 </main>
-<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>Marketplace search links only. No automatic AI recognition, live prices, checkout, or purchases.</span></div></footer>
+<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>AI recognition requires setup. Marketplace search links only; no live prices, checkout, or purchases.</span></div></footer>
 <script>
 const photo=document.getElementById('photo'), uploadInner=document.getElementById('uploadInner'),toast=document.getElementById('toast');
 let previewUrl=null;
@@ -85,6 +85,21 @@ photo.addEventListener('change',()=>{
  if(previewUrl)URL.revokeObjectURL(previewUrl);
  previewUrl=URL.createObjectURL(f);uploadInner.replaceChildren();
  const img=document.createElement('img');img.src=previewUrl;img.alt='Selected product preview';uploadInner.appendChild(img);
+});
+document.getElementById('identifyBtn').addEventListener('click', async () => {
+ const f=photo.files&&photo.files[0];const status=document.getElementById('identifyStatus');
+ if(!f){status.textContent='Please upload a product photo first.';return;}
+ const btn=document.getElementById('identifyBtn');btn.disabled=true;btn.textContent='ANALYZING PHOTO…';status.textContent='Analyzing your photo securely…';
+ try {
+  const form=new FormData();form.append('image',f);
+  const res=await fetch('/api/identify',{method:'POST',body:form});
+  const data=await res.json();
+  if(!res.ok)throw new Error(data.error||'Image recognition unavailable');
+  if(!data.query)throw new Error('Could not identify the item. Please enter a few clues.');
+  document.getElementById('details').value=data.query;
+  status.textContent='Suggested search: '+data.query+'. Please review or edit it, then click FIND THIS PRODUCT.';
+ }catch(err){status.textContent=err.message||'Recognition failed. Please enter product details manually.';}
+ finally{btn.disabled=false;btn.textContent='✦ IDENTIFY PHOTO WITH AI';}
 });
 let selected='Both';
 document.querySelectorAll('#condition .choice').forEach(btn=>btn.addEventListener('click',()=>{
