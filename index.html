@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Find Japanese products from a photo with JAPAN FINDER.">
-<title>JAPAN FINDER v9 — Find anything in Japan</title>
+<title>JAPAN FINDER v10 — Find anything in Japan</title>
 <style>
 :root{--ink:#17221e;--muted:#69766f;--line:#e5eae6;--paper:#fbfcfa;--green:#245b46;--mint:#eaf2ed;--white:#fff;--gold:#d7a85b}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -55,6 +55,8 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 .model-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px;background:white;border:1px solid var(--line);border-radius:12px;margin:8px 0}
 .model-item strong{font-size:12px}.model-item small{display:block;color:var(--muted);margin-top:5px;font-size:10px}
 .model-item button{border:0;border-radius:9px;background:var(--green);color:white;font-weight:700;padding:10px 13px;cursor:pointer;white-space:nowrap;font-size:11px}
+
+.ocr-panel{margin-top:14px;padding:16px;border:1px solid #b9d3c1;border-radius:14px;background:#f2f8f3}.ocr-panel h3{margin:0 0 7px;font-size:14px}.ocr-actions{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}.ocr-actions button{background:white;border:1px solid #b9d3c1;color:var(--green);padding:10px 13px;border-radius:10px;font-weight:750;cursor:pointer}.ocr-actions button:disabled{opacity:.55;cursor:wait}.ocr-panel textarea{min-height:76px}.ocr-panel .hint{margin-top:9px}.ocr-terms{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.ocr-terms button{border:1px solid #b9d3c1;background:white;color:#245b46;border-radius:99px;padding:7px 10px;cursor:pointer;font-size:11px}
 </style>
 </head>
 <body>
@@ -68,7 +70,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
  <div class="section-head"><div><div class="eyebrow">Start your search</div><h2>What are you looking for?</h2><p>Upload a photo and tell us what you know. The more details, the better.</p></div></div>
  <div class="search-panel">
   <div class="form-grid">
-   <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint" id="photoHint">Free on-device AI suggests product categories and possible model names. The image stays in your browser; the AI model is downloaded on first use (may be large).</div><button class="identify-btn" id="identifyBtn" type="button">✦ IDENTIFY PHOTO WITH AI</button><div class="hint" id="identifyStatus" role="status" aria-live="polite">On-device AI suggests categories, brands, and possible product names. Exact model numbers are not verified.</div><div class="ai-candidates" id="aiCandidates"><strong>Possible search terms — choose one</strong><div class="candidate-list" id="candidateList"></div><p class="ai-note">These are image similarity guesses, not verified logos or brand identifications. You can edit the search words before searching.</p></div><div id="modelPanel" class="model-panel" aria-live="polite"><div class="eyebrow">Experimental · candidate matching</div><h3>Possible product names &amp; model codes</h3><p id="modelExplanation">These are unverified CLIP text-similarity suggestions, not catalog matches. A similar-looking product may have a different model code. Select only if it matches your item.</p><div id="modelChoices"></div></div><div id="featurePanel" class="feature-panel" hidden><strong>Refine your search</strong><p class="ai-note">Color is estimated from image pixels, not recognized as a product attribute. Check the photo before using it.</p><div class="feature-grid"><label>Color<select id="colorChoice"><option value="">Not sure / skip</option><option value="black">Black</option><option value="white">White</option><option value="gray">Gray</option><option value="blue">Blue</option><option value="red">Red</option><option value="green">Green</option><option value="brown">Brown</option><option value="beige">Beige</option><option value="pink">Pink</option><option value="yellow">Yellow</option></select></label><label>Brand (optional)<input id="brandInput" type="text" maxlength="80" placeholder="e.g. Nike"></label><label>Model / code (optional)<input id="modelInput" type="text" maxlength="100" placeholder="e.g. Air Force 1"></label></div><button class="apply-btn" id="applyFeatures" type="button">BUILD SEARCH TERMS →</button><div class="hint" id="featureStatus" role="status"></div></div></div>
+   <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint" id="photoHint">Free on-device AI and OCR suggest product categories, visible label text, and possible model names. The image stays in your browser; the AI model is downloaded on first use (may be large).</div><button class="identify-btn" id="identifyBtn" type="button">✦ IDENTIFY PHOTO WITH AI</button><div class="hint" id="identifyStatus" role="status" aria-live="polite">On-device AI suggests categories, brands, and possible product names. Exact model numbers are not verified.</div><div class="ocr-panel"><h3>✦ Read text on the product (OCR)</h3><p class="ai-note">Reads Japanese and English text printed on labels, boxes, cards and tags. Free browser OCR; first use downloads language data. Results may contain mistakes.</p><div class="ocr-actions"><button type="button" id="ocrBtn">READ PHOTO TEXT</button><button type="button" id="useOcrBtn">ADD TEXT TO SEARCH</button></div><div class="hint" id="ocrStatus" role="status" aria-live="polite">Upload a photo, then read its text. The photo is processed in your browser.</div><label class="field-title" for="ocrText" style="margin-top:10px">Recognized text (editable)</label><textarea id="ocrText" placeholder="Detected Japanese / English words will appear here. You can correct them."></textarea><div class="ocr-terms" id="ocrTerms"></div><div class="hint">Tip: take a close-up of the product label or card number for better results. This is not a verified product database.</div></div><div class="ai-candidates" id="aiCandidates"><strong>Possible search terms — choose one</strong><div class="candidate-list" id="candidateList"></div><p class="ai-note">These are image similarity guesses, not verified logos or brand identifications. You can edit the search words before searching.</p></div><div id="modelPanel" class="model-panel" aria-live="polite"><div class="eyebrow">Experimental · candidate matching</div><h3>Possible product names &amp; model codes</h3><p id="modelExplanation">This is a small fixed demo candidate list, NOT a comprehensive product catalog. These are unverified CLIP text-similarity suggestions, not catalog matches. A similar-looking product may have a different model code. Select only if it matches your item.</p><div id="modelChoices"></div></div><div id="featurePanel" class="feature-panel" hidden><strong>Refine your search</strong><p class="ai-note">Color is estimated from image pixels, not recognized as a product attribute. Check the photo before using it.</p><div class="feature-grid"><label>Color<select id="colorChoice"><option value="">Not sure / skip</option><option value="black">Black</option><option value="white">White</option><option value="gray">Gray</option><option value="blue">Blue</option><option value="red">Red</option><option value="green">Green</option><option value="brown">Brown</option><option value="beige">Beige</option><option value="pink">Pink</option><option value="yellow">Yellow</option></select></label><label>Brand (optional)<input id="brandInput" type="text" maxlength="80" placeholder="e.g. Nike"></label><label>Model / code (optional)<input id="modelInput" type="text" maxlength="100" placeholder="e.g. Air Force 1"></label></div><button class="apply-btn" id="applyFeatures" type="button">BUILD SEARCH TERMS →</button><div class="hint" id="featureStatus" role="status"></div></div></div>
    <div>
     <div class="field"><label for="details">2. Product name or clues</label><textarea id="details" placeholder="Enter the product name, brand, color, or any details you know..."></textarea></div>
     <div class="field"><span class="field-title">3. Product condition</span><div class="choices" id="condition"><button class="choice" data-value="New" type="button">New</button><button class="choice" data-value="Used" type="button">Used</button><button class="choice active" data-value="Both" type="button">Both</button></div></div>
@@ -86,7 +88,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 </section>
 <section class="wrap section" id="about" style="padding-top:0"><div style="background:#edf3ee;border-radius:20px;padding:25px 28px"><div class="eyebrow">Our idea</div><h2 style="font-size:23px;margin:10px 0">Japan is full of things worth finding.</h2><p style="font-size:13px;line-height:1.8;color:#58675e;max-width:700px;margin:0">JAPAN FINDER aims to make discovering Japanese products easier for people everywhere — even when all they have is a picture.</p></div></section>
 </main>
-<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>v9 experimental browser AI. Product/model suggestions are unverified; no catalog image matching, verified SKUs, live prices, checkout, or purchases.</span></div></footer>
+<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>v10 experimental browser AI + OCR. Product/model suggestions are unverified; no catalog image matching, verified SKUs, live prices, checkout, or purchases.</span></div></footer>
 <script>
 const photo=document.getElementById('photo'), uploadInner=document.getElementById('uploadInner'),toast=document.getElementById('toast');
 let previewUrl=null;
@@ -107,10 +109,9 @@ const productCategories = [
  ['eyeglasses','メガネ'],['sunglasses','サングラス'],['hat','帽子'],
  ['jacket','ジャケット'],['t-shirt','Tシャツ'],['dress','ワンピース'],
  ['jeans','ジーンズ'],['toy figurine','フィギュア'],['plush toy','ぬいぐるみ'],
- ['trading card','トレーディングカード'],['video game console','ゲーム機'],
+ ['Pokémon trading card','ポケモンカード'],['trading card','トレーディングカード'],['video game console','ゲーム機'],
  ['headphones','ヘッドホン'],['camera','カメラ'],['smartphone','スマートフォン'],
- ['laptop computer','ノートパソコン'],['cosmetics bottle','化粧品'],
- ['perfume bottle','香水'],['ceramic cup','マグカップ'],['kitchen utensil','キッチン用品'],
+ ['laptop computer','ノートパソコン'],['skin care toner bottle','化粧水'],['cosmetics bottle','化粧品'],['face serum bottle','美容液'],['perfume bottle','香水'],['ceramic cup','マグカップ'],['kitchen utensil','キッチン用品'],
  ['book','本'],['stationery','文房具'],['furniture','家具'],
  ['bicycle','自転車'],['sports equipment','スポーツ用品'],['food package','食品'],
  ['anime merchandise','アニメグッズ'],['traditional Japanese craft','日本の伝統工芸品']
@@ -131,6 +132,10 @@ const brandByCategory = {
  sneakers:['Nike','Adidas','New Balance','ASICS','Puma','Converse','Vans','Reebok','Mizuno','Onitsuka Tiger'],
  'leather shoes':['Dr. Martens','Clarks','REGAL','Timberland'],
  handbag:['Louis Vuitton','Coach','Gucci','Prada','Michael Kors','Kate Spade'],
+ wallet:['Louis Vuitton','Gucci','Prada','Coach','Bottega Veneta','Saint Laurent','Dior','Chanel','Fendi','Hermès'],
+ 'skin care toner bottle':['Anua','Hada Labo','CeraVe','COSRX','Round Lab','SK-II','Naturie'],
+ 'cosmetics bottle':['Anua','Hada Labo','CeraVe','COSRX','Round Lab','SK-II','Naturie'],
+ 'face serum bottle':['Anua','The Ordinary','COSRX','La Roche-Posay','Medicube'],
  backpack:['The North Face','Porter','Nike','Adidas','Gregory'],
  wristwatch:['Casio','Seiko','Citizen','G-Shock','Rolex'],
  headphones:['Sony','Bose','Audio-Technica','JBL','Apple'],
@@ -263,11 +268,93 @@ function buildSearchTerms(){
  const color=document.getElementById('colorChoice').value;
  const brand=document.getElementById('brandInput').value.trim();
  const model=document.getElementById('modelInput').value.trim();
- const query=[brand,model,color,lastAnalysis.category].filter(Boolean).join(' ');
+ const label=extractOCRHints(document.getElementById('ocrText').value).slice(0,3).join(' ');
+ const query=[brand,model,label,color,lastAnalysis.category].filter(Boolean).join(' ');
  document.getElementById('details').value=query;
  document.getElementById('featureStatus').textContent='Search terms ready. Review them before searching.';
 }
 document.getElementById('applyFeatures').addEventListener('click',buildSearchTerms);
+
+// Tesseract.js runs OCR on-device. No API key and no upload to a service.
+let ocrWorkerPromise=null,ocrRunPromise=null;
+function getOCRWorker(){
+ if(!ocrWorkerPromise){
+  ocrWorkerPromise=(async()=>{
+   if(!window.Tesseract){
+    await new Promise((resolve,reject)=>{
+     const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+     sc.onload=resolve;sc.onerror=()=>reject(new Error('OCR library download failed'));document.head.appendChild(sc);
+    });
+   }
+   return window.Tesseract.createWorker('jpn+eng',1,{logger:m=>{
+    if(m.status==='recognizing text')document.getElementById('ocrStatus').textContent='Reading text… '+Math.round((m.progress||0)*100)+'%';
+   }});
+  })().catch(e=>{ocrWorkerPromise=null;throw e;});
+ }
+ return ocrWorkerPromise;
+}
+async function enhancedOCRImage(url){
+ const img=new Image();img.src=url;await img.decode();
+ const scale=Math.min(2.5,Math.max(1,1700/Math.max(img.width,img.height)));
+ const cv=document.createElement('canvas');cv.width=Math.round(img.width*scale);cv.height=Math.round(img.height*scale);
+ const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);ctx.drawImage(img,0,0,cv.width,cv.height);
+ return cv;
+}
+function extractOCRHints(text){
+ const lines=text.split(/[\r\n]+/).map(x=>x.trim()).filter(x=>x.length>1);
+ const stop=new Set(['MADE IN JAPAN','MADE IN CHINA','WARNING','INGREDIENTS','NET WT','FOR EXTERNAL USE ONLY']);
+ const out=[];
+ for(const line of lines){
+  const clean=line.replace(/[|_~]/g,' ').replace(/\s+/g,' ').trim();
+  if(clean.length<2||clean.length>90||stop.has(clean.toUpperCase()))continue;
+  if(/[\p{L}\p{N}]/u.test(clean))out.push(clean);
+ }
+ return [...new Set(out)].slice(0,14);
+}
+function refreshOCRChips(){
+ const area=document.getElementById('ocrTerms');area.replaceChildren();
+ for(const term of extractOCRHints(document.getElementById('ocrText').value).slice(0,8)){
+  const b=document.createElement('button');b.type='button';b.textContent='+ '+term;b.title='Add this text to search';
+  b.addEventListener('click',()=>appendSearchText(term));area.appendChild(b);
+ }
+}
+function appendSearchText(text){
+ const details=document.getElementById('details');
+ const old=details.value.trim();const add=text.trim();if(!add)return;
+ if(!old.toLowerCase().includes(add.toLowerCase()))details.value=[old,add].filter(Boolean).join(' ');
+}
+async function runOCR(){
+ if(!previewUrl)throw new Error('Upload a photo first.');
+ if(ocrRunPromise)return ocrRunPromise;
+ const btn=document.getElementById('ocrBtn'),status=document.getElementById('ocrStatus');
+ btn.disabled=true;status.textContent='Loading Japanese + English OCR (first run may take time)…';
+ ocrRunPromise=(async()=>{
+  const worker=await getOCRWorker();const img=await enhancedOCRImage(previewUrl);
+  const result=await worker.recognize(img);
+  const raw=(result.data?.text||'').trim();
+  document.getElementById('ocrText').value=raw;
+  refreshOCRChips();
+  status.textContent=raw?'Text extracted. Check spelling, then add to search.':'No readable text found. Try a sharper close-up of the label.';
+  return raw;
+ })().catch(e=>{status.textContent='OCR failed: '+e.message+'. You can type the label manually.';throw e;}).finally(()=>{btn.disabled=false;ocrRunPromise=null;});
+ return ocrRunPromise;
+}
+document.getElementById('ocrBtn').addEventListener('click',()=>runOCR().catch(console.warn));
+document.getElementById('ocrText').addEventListener('input',refreshOCRChips);
+document.getElementById('useOcrBtn').addEventListener('click',()=>{
+ const terms=extractOCRHints(document.getElementById('ocrText').value);
+ if(!terms.length){document.getElementById('ocrStatus').textContent='No text to add. Run OCR or type text first.';return;}
+ appendSearchText(terms.slice(0,4).join(' '));
+ document.getElementById('ocrStatus').textContent='Added label text to the search box. Review and edit it before searching.';
+});
+photo.addEventListener('change',()=>{document.getElementById('ocrText').value='';document.getElementById('ocrTerms').replaceChildren();document.getElementById('ocrStatus').textContent='Ready to read text from the new photo.';});
+function categoryFromOCR(raw){
+ const t=raw.toLowerCase();
+ if(/ポケモン|pokemon|pikachu|ピカチュウ|リザードン|ブラッキー/.test(t))return 'Pokémon trading card';
+ if(/anua|アヌア|toner|化粧水|heartleaf|ドクダミ|pdrn|cosrx|hada labo|肌ラボ/.test(t))return 'skin care toner bottle';
+ return '';
+}
+
 document.getElementById('identifyBtn').addEventListener('click', async () => {
  const f=photo.files&&photo.files[0];const status=document.getElementById('identifyStatus');
  if(!f){status.textContent='Please upload a product photo first.';return;}
@@ -276,6 +363,8 @@ document.getElementById('identifyBtn').addEventListener('click', async () => {
  document.getElementById('modelPanel').classList.remove('show');
  status.textContent='Loading on-device AI. First use can take a few minutes…';
  try {
+  let ocrRaw=document.getElementById('ocrText').value.trim();
+  if(!ocrRaw){try{ocrRaw=await runOCR();}catch(e){console.warn('OCR optional step unavailable',e);}}
   const classifier=await getImageClassifier();
   status.textContent='Step 1/3: Estimating product category…';
   const labels=productCategories.map(([en])=>'a photo of '+en);
@@ -283,7 +372,8 @@ document.getElementById('identifyBtn').addEventListener('click', async () => {
   if(!output?.length)throw new Error('No category found');
   const index=labels.indexOf(output[0].label);
   if(index<0)throw new Error('No category found');
-  const category=productCategories[index][0];
+  const ocrCategory=categoryFromOCR(ocrRaw);
+  const category=ocrCategory||productCategories[index][0];
   let suggestions=[category];
   lastAnalysis={category};
   document.getElementById('featurePanel').hidden=false;
@@ -303,11 +393,12 @@ document.getElementById('identifyBtn').addEventListener('click', async () => {
    suggestions=[category,...possible.map(x=>x.label.replace('a product photo of ','').replace(' '+category,'')+' '+category)];
    if(possible.length)document.getElementById('brandInput').placeholder='Possibly '+possible[0].label.replace('a product photo of ','').replace(' '+category,'')+' (verify manually)';
   }
-  document.getElementById('details').value=category;
+  const ocrHints=extractOCRHints(ocrRaw).slice(0,3).join(' ');
+  document.getElementById('details').value=[ocrHints,category].filter(Boolean).join(' ');
   showCandidates(suggestions);
   status.textContent='Step 3/3: Comparing product-name candidates…';
   try{await suggestSpecificModels(classifier,previewUrl,category);}catch(e){console.warn('Model candidate comparison unavailable',e);}
-  status.textContent='AI suggests: '+category+'. Check possible product names below. Exact product/model codes are NOT verified.';
+  status.textContent='Suggested category: '+category+(ocrCategory?' (supported by detected label text)':'')+'. OCR text is in the search box. Check spelling and product candidates; exact models are not verified.';
  }catch(err){
   console.error('On-device image recognition failed:',err);
   status.textContent='AI could not analyze this photo. Check your connection/browser, or enter a product description manually.';
