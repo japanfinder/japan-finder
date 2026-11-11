@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Find Japanese products from a photo with JAPAN FINDER.">
-<title>JAPAN FINDER v10 — Find anything in Japan</title>
+<title>JAPAN FINDER v14 — Find anything in Japan</title>
 <style>
 :root{--ink:#17221e;--muted:#69766f;--line:#e5eae6;--paper:#fbfcfa;--green:#245b46;--mint:#eaf2ed;--white:#fff;--gold:#d7a85b}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -57,10 +57,11 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 .model-item button{border:0;border-radius:9px;background:var(--green);color:white;font-weight:700;padding:10px 13px;cursor:pointer;white-space:nowrap;font-size:11px}
 
 .ocr-panel{margin-top:14px;padding:16px;border:1px solid #b9d3c1;border-radius:14px;background:#f2f8f3}.ocr-panel h3{margin:0 0 7px;font-size:14px}.ocr-actions{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}.ocr-actions button{background:white;border:1px solid #b9d3c1;color:var(--green);padding:10px 13px;border-radius:10px;font-weight:750;cursor:pointer}.ocr-actions button:disabled{opacity:.55;cursor:wait}.ocr-panel textarea{min-height:76px}.ocr-panel .hint{margin-top:9px}.ocr-terms{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.ocr-terms button{border:1px solid #b9d3c1;background:white;color:#245b46;border-radius:99px;padding:7px 10px;cursor:pointer;font-size:11px}
+.language-switch{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.language-switch select{width:auto;min-width:110px;padding:9px 11px;border-radius:999px}.organize-btn{margin-top:9px;background:#f0f6f1;border:1px solid #b9d3c1;color:var(--green);border-radius:10px;padding:10px 12px;font-weight:750;cursor:pointer;width:100%}.budget-row{display:flex;align-items:center;gap:8px}.budget-row span{font-weight:800;color:var(--green)}.budget-row input{min-width:0;flex:1}.small-outline{white-space:nowrap;background:white;border:1px solid var(--line);padding:12px;border-radius:10px;cursor:pointer;color:var(--green)}@media(max-width:760px){.language-switch span{display:none}}
 </style>
 </head>
 <body>
-<header><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><a class="brand" href="#" style="text-decoration:none">JAPAN <span>FINDER</span></a><nav><a href="#how">How it works</a><a href="#search">Find a product</a><a href="#about">About</a></nav><button class="lang" type="button" aria-label="Current language: English">ENGLISH　⌄</button></div></header>
+<header><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><a class="brand" href="#" style="text-decoration:none">JAPAN <span>FINDER</span></a><nav><a href="#how">How it works</a><a href="#search">Find a product</a><a href="#about">About</a></nav><label class="language-switch"><span id="languageLabel">Language</span><select id="uiLanguage" aria-label="Interface language"><option value="en">English</option><option value="ja">日本語</option><option value="zh">简体中文</option><option value="ko">한국어</option><option value="es">Español</option></select></label></div></header>
 <main>
 <section class="wrap hero">
  <div><div class="eyebrow">Your gateway to Japanese finds</div><h1>Find anything<br>in Japan. <em>From a photo.</em></h1><p class="lead">Seen something in Japan but don't know its name or where to buy it? Share a photo. We'll help you track it down — new or pre-loved.</p><div class="pills"><span class="pill">Photo-first search</span><span class="pill">New & used</span><span class="pill">Japan-wide discovery</span></div></div>
@@ -72,15 +73,15 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
   <div class="form-grid">
    <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint" id="photoHint">Free on-device AI and OCR suggest product categories, visible label text, and possible model names. The image stays in your browser; the AI model is downloaded on first use (may be large).</div><button class="identify-btn" id="identifyBtn" type="button">✦ IDENTIFY PHOTO WITH AI</button><div class="hint" id="identifyStatus" role="status" aria-live="polite">On-device AI suggests categories, brands, and possible product names. Exact model numbers are not verified.</div><div class="ocr-panel"><h3>✦ Read text on the product (OCR)</h3><p class="ai-note">NEW: PRODUCT TEXT ONLY prioritizes a few larger, higher-confidence label words instead of dumping all recognized text. Crop the label if the background is busy. Browser OCR may still misread blurry or stylized text.</p><div class="ocr-actions"><button type="button" id="cropBtn">CROP PRODUCT AREA</button><button type="button" id="resetCropBtn">RESET CROP</button><button type="button" id="ocrBtn">READ PHOTO TEXT</button><button type="button" id="bigTextBtn" style="background:#176b49;color:white">★ PRODUCT TEXT ONLY</button><button type="button" id="useOcrBtn">ADD TEXT TO SEARCH</button></div><div id="cropPanel" hidden style="margin:12px 0"><p class="ai-note">Drag across the image to select only the label or product. Then click APPLY CROP. Cropping affects OCR only, not AI image recognition.</p><canvas id="cropCanvas" style="width:100%;max-height:440px;object-fit:contain;touch-action:none;cursor:crosshair;border:1px solid #cbd9cf;border-radius:10px"></canvas><button type="button" id="applyCropBtn" class="apply-btn">APPLY CROP</button></div><div class="hint" id="ocrStatus" role="status" aria-live="polite">Upload a photo, then read its text. The photo is processed in your browser.</div><div id="largeTextPanel" hidden style="margin:10px 0;padding:12px;border:1px solid #b9d3c1;border-radius:12px;background:white"><strong>★ Product label words (tap to search)</strong><div id="largeTextChoices" class="ocr-terms" style="margin-top:8px"></div><div class="hint">Filtered by text size and OCR confidence; these are unverified suggestions. Correct mistakes before searching.</div></div><label class="field-title" for="ocrText" style="margin-top:10px">Product search text (editable, max 5 words)</label><textarea id="ocrText" placeholder="A few likely product label words appear here. Correct them if needed."></textarea><details style="margin-top:9px"><summary style="cursor:pointer;font-size:12px;color:#50645a">Show full OCR output (may contain errors)</summary><pre id="ocrFullText" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;background:#fff;padding:10px;border-radius:8px;max-height:180px;overflow:auto"></pre></details><div class="ocr-terms" id="ocrTerms"></div><div class="hint">Tip: take a close-up of the product label or card number for better results. This is not a verified product database.</div></div><div class="ai-candidates" id="aiCandidates"><strong>Possible search terms — choose one</strong><div class="candidate-list" id="candidateList"></div><p class="ai-note">These are image similarity guesses, not verified logos or brand identifications. You can edit the search words before searching.</p></div><div id="modelPanel" class="model-panel" aria-live="polite"><div class="eyebrow">Experimental · candidate matching</div><h3>Possible product names &amp; model codes</h3><p id="modelExplanation">This is a small fixed demo candidate list, NOT a comprehensive product catalog. These are unverified CLIP text-similarity suggestions, not catalog matches. A similar-looking product may have a different model code. Select only if it matches your item.</p><div id="modelChoices"></div></div><div id="featurePanel" class="feature-panel" hidden><strong>Refine your search</strong><p class="ai-note">Color is estimated from image pixels, not recognized as a product attribute. Check the photo before using it.</p><div class="feature-grid"><label>Color<select id="colorChoice"><option value="">Not sure / skip</option><option value="black">Black</option><option value="white">White</option><option value="gray">Gray</option><option value="blue">Blue</option><option value="red">Red</option><option value="green">Green</option><option value="brown">Brown</option><option value="beige">Beige</option><option value="pink">Pink</option><option value="yellow">Yellow</option></select></label><label>Brand (optional)<input id="brandInput" type="text" maxlength="80" placeholder="e.g. Nike"></label><label>Model / code (optional)<input id="modelInput" type="text" maxlength="100" placeholder="e.g. Air Force 1"></label></div><button class="apply-btn" id="applyFeatures" type="button">BUILD SEARCH TERMS →</button><div class="hint" id="featureStatus" role="status"></div></div></div>
    <div>
-    <div class="field"><label for="details">2. Product name or clues</label><textarea id="details" placeholder="Enter the product name, brand, color, or any details you know..."></textarea></div>
-    <div class="field"><span class="field-title">3. Product condition</span><div class="choices" id="condition"><button class="choice" data-value="New" type="button">New</button><button class="choice" data-value="Used" type="button">Used</button><button class="choice active" data-value="Both" type="button">Both</button></div></div>
-    <div class="field"><label for="budget">4. Budget (JPY)</label><select id="budget"><option value="No limit">No limit</option><option value="¥3,000">Up to ¥3,000</option><option value="¥5,000">Up to ¥5,000</option><option value="¥10,000" selected>Up to ¥10,000</option><option value="¥30,000">Up to ¥30,000</option></select></div>
-    <div class="field"><label for="country">5. Your country</label><select id="country"><option>United States</option><option>Taiwan</option><option>South Korea</option><option>Hong Kong</option><option>Singapore</option><option>Malaysia</option><option>Other</option></select></div>
+    <div class="field"><label for="details" data-i18n="clueLabel">2. Product name or clues</label><textarea id="details" placeholder="Enter the product name, brand, color, or any details you know..."></textarea><button class="organize-btn" id="organizeClues" type="button" data-i18n="organize">✦ Organize product clues</button><div class="hint" id="clueStatus" role="status" aria-live="polite" data-i18n="clueHint">Combine recognized text and AI suggestions into a clear product description. Review before searching.</div></div>
+    <div class="field"><span class="field-title" data-i18n="conditionLabel">3. Product condition</span><div class="choices" id="condition"><button class="choice" data-value="New" type="button">New</button><button class="choice" data-value="Used" type="button">Used</button><button class="choice active" data-value="Both" type="button">Both</button></div></div>
+    <div class="field"><label for="budgetAmount" data-i18n="budgetLabel">4. Maximum budget (JPY)</label><div class="budget-row"><span aria-hidden="true">¥</span><input id="budgetAmount" type="number" min="1" max="100000000" step="1" inputmode="numeric" placeholder="e.g. 10000" aria-label="Maximum budget in Japanese yen"><button id="noBudget" type="button" class="small-outline" data-i18n="noLimit">No limit</button></div><div class="hint" data-i18n="budgetHint">Enter any amount in yen. This is a preference, not a live marketplace price filter.</div></div>
+    <div class="field"><label for="country" data-i18n="countryLabel">5. Your country</label><select id="country"><option>United States</option><option>Taiwan</option><option>South Korea</option><option>Hong Kong</option><option>Singapore</option><option>Malaysia</option><option>Other</option></select></div>
    </div>
   </div>
-  <button class="search-btn" id="searchBtn" type="button">FIND THIS PRODUCT　→</button>
+  <button class="search-btn" id="searchBtn" type="button" data-i18n="searchBtn">FIND THIS PRODUCT →</button>
   <div class="toast" id="toast" role="status">Please enter a product name or a few clues. Please identify the photo or enter a product name or clues.</div>
-  <div class="results" id="results"><div class="result-head"><h3>Search Japanese marketplaces</h3><span class="demo-tag">SEARCH LINKS · NO LIVE LISTINGS</span></div><p style="font-size:12px;color:#69766f;line-height:1.7" id="resultSummary">Search marketplaces for matching products. Prices and stock are shown by each marketplace.</p><div id="resultCards"></div></div>
+  <div class="results" id="results"><div class="result-head"><h3 data-i18n="marketplaces">Search Japanese marketplaces</h3><span class="demo-tag" data-i18n="demo">SEARCH LINKS · NO LIVE LISTINGS</span></div><p style="font-size:12px;color:#69766f;line-height:1.7" id="resultSummary">Search marketplaces for matching products. Prices and stock are shown by each marketplace.</p><div id="resultCards"></div></div>
  </div>
 </section>
 <section class="wrap section" id="how"><div class="section-head"><div><div class="eyebrow">Simple by design</div><h2>How it works</h2><p>From a photo to a place to buy in three simple steps.</p></div></div>
@@ -88,7 +89,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 </section>
 <section class="wrap section" id="about" style="padding-top:0"><div style="background:#edf3ee;border-radius:20px;padding:25px 28px"><div class="eyebrow">Our idea</div><h2 style="font-size:23px;margin:10px 0">Japan is full of things worth finding.</h2><p style="font-size:13px;line-height:1.8;color:#58675e;max-width:700px;margin:0">JAPAN FINDER aims to make discovering Japanese products easier for people everywhere — even when all they have is a picture.</p></div></section>
 </main>
-<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>v13 experimental browser AI + focused product-label OCR. Product/model suggestions are unverified; no catalog image matching, verified SKUs, live prices, checkout, or purchases.</span></div></footer>
+<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>v14 multilingual interface + editable budget + organized clues; browser AI + focused OCR. Product/model suggestions are unverified; no catalog image matching, verified SKUs, live prices, checkout, or purchases.</span></div></footer>
 <script>
 const photo=document.getElementById('photo'), uploadInner=document.getElementById('uploadInner'),toast=document.getElementById('toast');
 let previewUrl=null;
@@ -263,16 +264,38 @@ async function estimateColor(url){
  }
  return [...votes].sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
 }
-function buildSearchTerms(){
- if(!lastAnalysis)return;
+function cleanClue(s){return String(s||'').replace(/[\r\n\t]+/g,' ').replace(/\s+/g,' ').trim();}
+function uniqueParts(parts){const seen=new Set();return parts.map(cleanClue).filter(x=>{if(!x)return false;const k=x.toLocaleLowerCase();if(seen.has(k))return false;seen.add(k);return true;});}
+function composeClues(){
+ const brand=cleanClue(document.getElementById('brandInput').value);
+ const model=cleanClue(document.getElementById('modelInput').value);
  const color=document.getElementById('colorChoice').value;
- const brand=document.getElementById('brandInput').value.trim();
- const model=document.getElementById('modelInput').value.trim();
- const label=extractOCRHints(document.getElementById('ocrText').value).slice(0,3).join(' ');
- const query=[brand,model,label,color,lastAnalysis.category].filter(Boolean).join(' ');
- document.getElementById('details').value=query;
- document.getElementById('featureStatus').textContent='Search terms ready. Review them before searching.';
+ const category=lastAnalysis?.category||'';
+ const ocr=extractOCRHints(document.getElementById('ocrText').value).slice(0,3).map(cleanClue).filter(Boolean);
+ const parts=uniqueParts([brand,model,...ocr]);
+ const filtered=parts.filter((p,i)=>!parts.some((other,j)=>i!==j&&other.length>p.length&&other.toLocaleLowerCase().includes(p.toLocaleLowerCase())));
+ const keywords=uniqueParts([...filtered,color,category]);
+ const language=document.getElementById('uiLanguage').value;
+ const phrase=filtered.join(' ');
+ const categoryWord=category||({ja:'商品',zh:'商品',ko:'상품',es:'producto',en:'product'}[language]);
+ const formatted={
+  en: phrase ? `${phrase}${color?' in '+color:''}${category&&!phrase.toLowerCase().includes(category.toLowerCase())?' ('+category+')':''}` : `Possible ${color?color+' ':''}${categoryWord}`,
+  ja: phrase ? `${phrase}${color?'（'+color+'）':''}${category?'／'+category:''}` : `${color?color+' ':''}${categoryWord}の候補`,
+  zh: phrase ? `${phrase}${color?'（'+color+'）':''}${category?'／'+category:''}` : `${color?color+' ':''}${categoryWord}候选`,
+  ko: phrase ? `${phrase}${color?' ('+color+')':''}${category?' / '+category:''}` : `${color?color+' ':''}${categoryWord} 후보`,
+  es: phrase ? `${phrase}${color?' en '+color:''}${category?' ('+category+')':''}` : `Posible ${categoryWord}${color?' '+color:''}`
+ }[language];
+ return {formatted,keywords:keywords.join(' ')};
 }
+function buildSearchTerms(){
+ const value=composeClues();
+ document.getElementById('details').value=value.formatted;
+ document.getElementById('details').dataset.searchKeywords=value.keywords;
+ document.getElementById('clueStatus').textContent=i18n[document.getElementById('uiLanguage').value].clueReady;
+ document.getElementById('featureStatus').textContent=i18n[document.getElementById('uiLanguage').value].clueReady;
+}
+document.getElementById('organizeClues').addEventListener('click',buildSearchTerms);
+document.getElementById('details').addEventListener('input',e=>{delete e.target.dataset.searchKeywords;});
 document.getElementById('applyFeatures').addEventListener('click',buildSearchTerms);
 
 // Tesseract.js runs OCR on-device. No API key and no upload to a service.
@@ -487,7 +510,10 @@ document.querySelectorAll('#condition .choice').forEach(btn=>btn.addEventListene
  selected=btn.dataset.value;document.querySelectorAll('#condition .choice').forEach(b=>b.classList.toggle('active',b===btn));
 }));
 document.getElementById('searchBtn').addEventListener('click',()=>{
- const query=document.getElementById('details').value.trim();
+ const rawBudget=document.getElementById('budgetAmount').value;
+ if(rawBudget&&(Number(rawBudget)<1||!Number.isSafeInteger(Number(rawBudget))||Number(rawBudget)>100000000)){document.getElementById('budgetAmount').setCustomValidity('Enter a valid amount from 1 to 100,000,000 JPY');document.getElementById('budgetAmount').reportValidity();return;}
+ document.getElementById('budgetAmount').setCustomValidity('');
+ const query=document.getElementById('details').dataset.searchKeywords||document.getElementById('details').value.trim();
  if(!query){toast.classList.add('show');document.getElementById('details').focus();return;}
  toast.classList.remove('show');
  const options=[];
@@ -507,10 +533,22 @@ document.getElementById('searchBtn').addEventListener('click',()=>{
   const link=document.createElement('a');link.className='result-link';link.href=o.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='SEARCH ↗';
   card.append(icon,info,link);list.appendChild(card);
  }
- const budget=document.getElementById('budget').value;
- document.getElementById('resultSummary').textContent='Search for “'+query+'”. Budget preference: '+budget+'. Check prices, availability, and shipping on each marketplace.';
+ const amount=document.getElementById('budgetAmount').value;
+ const budget=amount?'¥'+Number(amount).toLocaleString('ja-JP'):i18n[document.getElementById('uiLanguage').value].noLimit;
+ const L=i18n[document.getElementById('uiLanguage').value];
+ document.getElementById('resultSummary').textContent=L.results.replace('{query}',query).replace('{budget}',budget);
  const results=document.getElementById('results');results.classList.add('show');results.scrollIntoView({behavior:'smooth',block:'nearest'});
 });
+const i18n={
+ en:{languageLabel:'Language',clueLabel:'2. Product name or clues',organize:'✦ Organize product clues',clueHint:'Combine recognized text and AI suggestions into a clear product description. Review before searching.',clueReady:'Clues organized. Please check the wording and correct any recognition errors.',conditionLabel:'3. Product condition',budgetLabel:'4. Maximum budget (JPY)',noLimit:'No limit',budgetHint:'Enter any amount in yen. This is a preference, not a live marketplace price filter.',countryLabel:'5. Your country',searchBtn:'FIND THIS PRODUCT →',marketplaces:'Search Japanese marketplaces',demo:'SEARCH LINKS · NO LIVE LISTINGS',results:'Search for “{query}”. Maximum budget: {budget}. Check prices, availability, and shipping on each marketplace.',new:'New',used:'Used',both:'Both'},
+ ja:{languageLabel:'言語',clueLabel:'2. 商品名・手がかり',organize:'✦ 手がかりを自然な文章に整理',clueHint:'OCRの文字とAIの候補を整理します。誤認識がないか確認してください。',clueReady:'手がかりを整理しました。内容を確認し、間違いがあれば修正してください。',conditionLabel:'3. 商品の状態',budgetLabel:'4. 予算上限（円）',noLimit:'上限なし',budgetHint:'好きな金額を円で入力できます。販売サイトの価格を自動で絞り込む機能ではありません。',countryLabel:'5. お住まいの国・地域',searchBtn:'この商品を探す →',marketplaces:'日本の販売サイトで探す',demo:'検索リンク・リアルタイム商品情報なし',results:'「{query}」を検索します。予算上限：{budget}。価格・在庫・送料は各販売サイトで確認してください。',new:'新品',used:'中古',both:'両方'},
+ zh:{languageLabel:'语言',clueLabel:'2. 商品名称或线索',organize:'✦ 整理商品线索',clueHint:'整理OCR文字与AI建议，搜索前请核对。',clueReady:'线索已整理，请核对并修改识别错误。',conditionLabel:'3. 商品状态',budgetLabel:'4. 预算上限（日元）',noLimit:'不限',budgetHint:'可自行输入日元金额；不会自动过滤商店价格。',countryLabel:'5. 国家或地区',searchBtn:'搜索商品 →',marketplaces:'搜索日本购物网站',demo:'仅搜索链接·非实时商品信息',results:'搜索“{query}”。预算上限：{budget}。请在商店确认价格、库存及运费。',new:'全新',used:'二手',both:'均可'},
+ ko:{languageLabel:'언어',clueLabel:'2. 상품명 또는 단서',organize:'✦ 상품 단서 정리',clueHint:'OCR 텍스트와 AI 추천을 정리합니다. 검색 전에 확인하세요.',clueReady:'단서를 정리했습니다. 인식 오류를 확인하고 수정하세요.',conditionLabel:'3. 상품 상태',budgetLabel:'4. 최대 예산 (엔)',noLimit:'제한 없음',budgetHint:'엔화로 직접 입력할 수 있습니다. 쇼핑몰 가격 필터는 아닙니다.',countryLabel:'5. 국가 또는 지역',searchBtn:'상품 검색 →',marketplaces:'일본 쇼핑몰 검색',demo:'검색 링크만 제공·실시간 상품 정보 없음',results:'“{query}” 검색. 최대 예산: {budget}. 가격·재고·배송비는 쇼핑몰에서 확인하세요.',new:'새 상품',used:'중고',both:'모두'},
+ es:{languageLabel:'Idioma',clueLabel:'2. Nombre o pistas del producto',organize:'✦ Organizar pistas del producto',clueHint:'Organiza el texto OCR y las sugerencias de IA. Revisa antes de buscar.',clueReady:'Pistas organizadas. Revisa y corrige posibles errores.',conditionLabel:'3. Estado del producto',budgetLabel:'4. Presupuesto máximo (JPY)',noLimit:'Sin límite',budgetHint:'Introduce cualquier importe en yenes. No filtra los precios de las tiendas.',countryLabel:'5. Tu país',searchBtn:'BUSCAR PRODUCTO →',marketplaces:'Buscar en tiendas japonesas',demo:'ENLACES DE BÚSQUEDA · SIN DATOS EN VIVO',results:'Buscar “{query}”. Presupuesto máximo: {budget}. Comprueba precios, disponibilidad y envío en cada tienda.',new:'Nuevo',used:'Usado',both:'Ambos'}
+};
+function setLanguage(lang){const L=i18n[lang]||i18n.en;document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=L[el.dataset.i18n]||el.textContent;});document.querySelectorAll('#condition .choice').forEach(el=>{el.textContent=L[el.dataset.value.toLowerCase()];});document.getElementById('languageLabel').textContent=L.languageLabel;}
+document.getElementById('uiLanguage').addEventListener('change',e=>setLanguage(e.target.value));
+document.getElementById('noBudget').addEventListener('click',()=>{document.getElementById('budgetAmount').value='';document.getElementById('budgetAmount').setCustomValidity('');});
+setLanguage('en');
 </script>
 </body></html>
-```
