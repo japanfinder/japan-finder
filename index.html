@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Find Japanese products from a photo with JAPAN FINDER.">
-<title>JAPAN FINDER v8 — Find anything in Japan</title>
+<title>JAPAN FINDER v9 — Find anything in Japan</title>
 <style>
 :root{--ink:#17221e;--muted:#69766f;--line:#e5eae6;--paper:#fbfcfa;--green:#245b46;--mint:#eaf2ed;--white:#fff;--gold:#d7a85b}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -49,6 +49,12 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
  .candidate:hover,.candidate:focus-visible{background:var(--mint);border-color:var(--green)}
  .ai-note{font-size:11px;color:var(--muted);line-height:1.6;margin:8px 0 0}
 .feature-panel{margin-top:14px;padding:16px;border:1px solid #dce6df;background:#f8fbf8;border-radius:13px}.feature-panel[hidden]{display:none}.feature-panel>strong{font-size:13px}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.feature-grid label{font-size:11px;font-weight:750}.feature-grid select,.feature-grid input{margin-top:6px}.apply-btn{width:100%;background:#245b46;color:#fff;border:0;border-radius:10px;padding:12px;margin-top:12px;font-weight:750;cursor:pointer}.feature-panel .ai-note{margin-top:8px}.version-note{font-size:11px;color:#69766f;margin-top:10px}@media(max-width:760px){.feature-grid{grid-template-columns:1fr}}
+
+.model-panel{display:none;margin-top:14px;padding:17px;border:1px solid #b9d3c1;background:#f2f8f3;border-radius:14px}.model-panel.show{display:block}
+.model-panel h3{font-size:15px;margin:4px 0 8px}.model-panel p{font-size:11px;line-height:1.65;color:var(--muted)}
+.model-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px;background:white;border:1px solid var(--line);border-radius:12px;margin:8px 0}
+.model-item strong{font-size:12px}.model-item small{display:block;color:var(--muted);margin-top:5px;font-size:10px}
+.model-item button{border:0;border-radius:9px;background:var(--green);color:white;font-weight:700;padding:10px 13px;cursor:pointer;white-space:nowrap;font-size:11px}
 </style>
 </head>
 <body>
@@ -62,7 +68,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
  <div class="section-head"><div><div class="eyebrow">Start your search</div><h2>What are you looking for?</h2><p>Upload a photo and tell us what you know. The more details, the better.</p></div></div>
  <div class="search-panel">
   <div class="form-grid">
-   <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint" id="photoHint">Free on-device AI estimates the product category. The image stays in your browser; the AI model is downloaded on first use (may be large).</div><button class="identify-btn" id="identifyBtn" type="button">✦ IDENTIFY PHOTO WITH AI</button><div class="hint" id="identifyStatus" role="status" aria-live="polite">On-device AI is experimental. It suggests possible categories and brands, not an exact model.</div><div class="ai-candidates" id="aiCandidates"><strong>Possible search terms — choose one</strong><div class="candidate-list" id="candidateList"></div><p class="ai-note">These are image similarity guesses, not verified logos or brand identifications. You can edit the search words before searching.</p></div><div id="featurePanel" class="feature-panel" hidden><strong>Refine your search</strong><p class="ai-note">Color is estimated from image pixels, not recognized as a product attribute. Check the photo before using it.</p><div class="feature-grid"><label>Color<select id="colorChoice"><option value="">Not sure / skip</option><option value="black">Black</option><option value="white">White</option><option value="gray">Gray</option><option value="blue">Blue</option><option value="red">Red</option><option value="green">Green</option><option value="brown">Brown</option><option value="beige">Beige</option><option value="pink">Pink</option><option value="yellow">Yellow</option></select></label><label>Brand (optional)<input id="brandInput" type="text" maxlength="80" placeholder="e.g. Nike"></label><label>Model / code (optional)<input id="modelInput" type="text" maxlength="100" placeholder="e.g. Air Force 1"></label></div><button class="apply-btn" id="applyFeatures" type="button">BUILD SEARCH TERMS →</button><div class="hint" id="featureStatus" role="status"></div></div></div>
+   <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint" id="photoHint">Free on-device AI suggests product categories and possible model names. The image stays in your browser; the AI model is downloaded on first use (may be large).</div><button class="identify-btn" id="identifyBtn" type="button">✦ IDENTIFY PHOTO WITH AI</button><div class="hint" id="identifyStatus" role="status" aria-live="polite">On-device AI suggests categories, brands, and possible product names. Exact model numbers are not verified.</div><div class="ai-candidates" id="aiCandidates"><strong>Possible search terms — choose one</strong><div class="candidate-list" id="candidateList"></div><p class="ai-note">These are image similarity guesses, not verified logos or brand identifications. You can edit the search words before searching.</p></div><div id="modelPanel" class="model-panel" aria-live="polite"><div class="eyebrow">Experimental · candidate matching</div><h3>Possible product names &amp; model codes</h3><p id="modelExplanation">These are unverified CLIP text-similarity suggestions, not catalog matches. A similar-looking product may have a different model code. Select only if it matches your item.</p><div id="modelChoices"></div></div><div id="featurePanel" class="feature-panel" hidden><strong>Refine your search</strong><p class="ai-note">Color is estimated from image pixels, not recognized as a product attribute. Check the photo before using it.</p><div class="feature-grid"><label>Color<select id="colorChoice"><option value="">Not sure / skip</option><option value="black">Black</option><option value="white">White</option><option value="gray">Gray</option><option value="blue">Blue</option><option value="red">Red</option><option value="green">Green</option><option value="brown">Brown</option><option value="beige">Beige</option><option value="pink">Pink</option><option value="yellow">Yellow</option></select></label><label>Brand (optional)<input id="brandInput" type="text" maxlength="80" placeholder="e.g. Nike"></label><label>Model / code (optional)<input id="modelInput" type="text" maxlength="100" placeholder="e.g. Air Force 1"></label></div><button class="apply-btn" id="applyFeatures" type="button">BUILD SEARCH TERMS →</button><div class="hint" id="featureStatus" role="status"></div></div></div>
    <div>
     <div class="field"><label for="details">2. Product name or clues</label><textarea id="details" placeholder="Enter the product name, brand, color, or any details you know..."></textarea></div>
     <div class="field"><span class="field-title">3. Product condition</span><div class="choices" id="condition"><button class="choice" data-value="New" type="button">New</button><button class="choice" data-value="Used" type="button">Used</button><button class="choice active" data-value="Both" type="button">Both</button></div></div>
@@ -76,11 +82,11 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
  </div>
 </section>
 <section class="wrap section" id="how"><div class="section-head"><div><div class="eyebrow">Simple by design</div><h2>How it works</h2><p>From a photo to a place to buy in three simple steps.</p></div></div>
- <div class="steps"><article class="step"><div class="step-num">STEP 01</div><h3>Share a photo</h3><p>Upload an image to preview the item. Use on-device AI to suggest a product category; review or refine the search words.</p></article><article class="step"><div class="step-num">STEP 02</div><h3>Choose your preference</h3><p>Choose new or used products, set a budget, and add a product name or clues.</p></article><article class="step"><div class="step-num">STEP 03</div><h3>Discover your options</h3><p>Open relevant searches on Amazon Japan, Mercari, and Yahoo! Flea Market.</p></article></div>
+ <div class="steps"><article class="step"><div class="step-num">STEP 01</div><h3>Share a photo</h3><p>Upload an image to preview the item. Use on-device AI to suggest a category, brand, and possible product name; review the suggestions.</p></article><article class="step"><div class="step-num">STEP 02</div><h3>Choose your preference</h3><p>Choose new or used products, set a budget, and add a product name or clues.</p></article><article class="step"><div class="step-num">STEP 03</div><h3>Discover your options</h3><p>Open relevant searches on Amazon Japan, Mercari, and Yahoo! Flea Market.</p></article></div>
 </section>
 <section class="wrap section" id="about" style="padding-top:0"><div style="background:#edf3ee;border-radius:20px;padding:25px 28px"><div class="eyebrow">Our idea</div><h2 style="font-size:23px;margin:10px 0">Japan is full of things worth finding.</h2><p style="font-size:13px;line-height:1.8;color:#58675e;max-width:700px;margin:0">JAPAN FINDER aims to make discovering Japanese products easier for people everywhere — even when all they have is a picture.</p></div></section>
 </main>
-<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>v8 experimental browser AI. Unverified brand/color suggestions; no model identification, live prices, checkout, or purchases.</span></div></footer>
+<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>v9 experimental browser AI. Product/model suggestions are unverified; no catalog image matching, verified SKUs, live prices, checkout, or purchases.</span></div></footer>
 <script>
 const photo=document.getElementById('photo'), uploadInner=document.getElementById('uploadInner'),toast=document.getElementById('toast');
 let previewUrl=null;
@@ -132,6 +138,93 @@ const brandByCategory = {
  'camera':['Canon','Nikon','Sony','Fujifilm'],
  'jacket':['Nike','Adidas','The North Face','Uniqlo','Patagonia']
 };
+
+// A small, manually curated TEXT candidate library, NOT an image database.
+// SKU codes are intentionally omitted unless independently verified against a catalog.
+// CLIP only ranks the candidate descriptions supplied here; it cannot establish identity.
+const productLibrary={
+ 'trading card':[
+  ['Pikachu Pokémon card','ピカチュウ ポケモンカード','Pokémon Pikachu trading card'],
+  ['Van Gogh Pikachu','ゴッホピカチュウ','Pokémon Pikachu with Grey Felt Hat Van Gogh trading card'],
+  ['Munch Pikachu','ムンクピカチュウ','Pokémon Munch Scream Pikachu promotional trading card'],
+  ['Beauty Looking Back Pikachu','見返り美人ピカチュウ','Pokémon Pikachu Beauty Looking Back promotional trading card'],
+  ['Charizard Pokémon card','リザードン ポケモンカード','Pokémon Charizard trading card'],
+  ['Umbreon Pokémon card','ブラッキー ポケモンカード','Pokémon Umbreon trading card'],
+  ['One Piece trading card','ワンピースカード','One Piece collectible trading card'],
+  ['Yu-Gi-Oh trading card','遊戯王カード','Yu-Gi-Oh trading card']
+ ],
+ 'wallet':[
+  ['Louis Vuitton Monogram wallet','ルイヴィトン モノグラム 財布','Louis Vuitton classic brown monogram canvas wallet'],
+  ['Louis Vuitton Damier Ebene wallet','ルイヴィトン ダミエ エベヌ 財布','Louis Vuitton brown checkered Damier Ebene wallet'],
+  ['Louis Vuitton Damier Azur wallet','ルイヴィトン ダミエ アズール 財布','Louis Vuitton white checkered Damier Azur wallet'],
+  ['Louis Vuitton Epi wallet','ルイヴィトン エピ 財布','Louis Vuitton Epi textured leather wallet'],
+  ['Louis Vuitton Zippy Wallet','ルイヴィトン ジッピーウォレット','Louis Vuitton long zip around monogram wallet'],
+  ['Louis Vuitton Victorine wallet','ルイヴィトン ヴィクトリーヌ 財布','Louis Vuitton compact tri fold monogram wallet'],
+  ['Gucci GG Marmont wallet','グッチ GGマーモント 財布','Gucci GG Marmont wallet double G metal logo'],
+  ['Gucci GG Supreme wallet','グッチ GGスプリーム 財布','Gucci GG Supreme canvas patterned wallet'],
+  ['Prada Saffiano wallet','プラダ サフィアーノ 財布','Prada Saffiano leather wallet triangle logo'],
+  ['Coach signature wallet','コーチ シグネチャー 財布','Coach signature C pattern wallet'],
+  ['Saint Laurent wallet','サンローラン 財布','Saint Laurent YSL logo leather wallet'],
+  ['Bottega Veneta Intrecciato wallet','ボッテガヴェネタ イントレチャート 財布','Bottega Veneta woven leather wallet']
+ ],
+ 'sneakers':[
+  ['Nike Air Force 1 Low','ナイキ エアフォース1 ロー','Nike Air Force 1 low top leather sneakers'],
+  ['Nike Dunk Low','ナイキ ダンク ロー','Nike Dunk Low two tone sneakers'],
+  ['Nike Air Jordan 1','ナイキ エアジョーダン1','Nike Air Jordan 1 basketball sneakers'],
+  ['Nike Air Max 90','ナイキ エアマックス90','Nike Air Max 90 visible air sneakers'],
+  ['Nike Air Max 95','ナイキ エアマックス95','Nike Air Max 95 layered wavy sneakers'],
+  ['Adidas Samba','アディダス サンバ','Adidas Samba low sneakers with three stripes'],
+  ['Adidas Gazelle','アディダス ガゼル','Adidas Gazelle suede sneakers'],
+  ['New Balance 574','ニューバランス 574','New Balance 574 sneakers with N logo'],
+  ['New Balance 990','ニューバランス 990','New Balance 990 running sneakers'],
+  ['Converse Chuck Taylor All Star','コンバース オールスター','Converse Chuck Taylor canvas sneakers']
+ ],
+ 'wristwatch':[
+  ['Casio G-SHOCK DW-5600','カシオ Gショック DW-5600','Casio G Shock DW 5600 square digital watch'],
+  ['Casio G-SHOCK GA-2100','カシオ Gショック GA-2100','Casio G Shock GA 2100 octagonal analog digital watch'],
+  ['Casio F-91W','カシオ F-91W','Casio F 91W rectangular digital wristwatch'],
+  ['Seiko 5 Sports','セイコー5 スポーツ','Seiko 5 Sports automatic analog wristwatch'],
+  ['Rolex Submariner','ロレックス サブマリーナ','Rolex Submariner diving wristwatch'],
+  ['Apple Watch','アップルウォッチ','Apple Watch square smartwatch']
+ ],
+ 'handbag':[
+  ['Louis Vuitton Neverfull','ルイヴィトン ネヴァーフル','Louis Vuitton Neverfull monogram tote bag'],
+  ['Louis Vuitton Speedy','ルイヴィトン スピーディ','Louis Vuitton Speedy monogram rounded handbag'],
+  ['Gucci GG Marmont bag','グッチ GGマーモント バッグ','Gucci GG Marmont quilted handbag'],
+  ['Coach Tabby bag','コーチ タビー バッグ','Coach Tabby shoulder bag'],
+  ['Prada Re-Edition bag','プラダ リエディション バッグ','Prada Re Edition nylon shoulder bag']
+ ],
+ 'necklace':[
+  ['Tiffany Open Heart','ティファニー オープンハート','Tiffany Elsa Peretti Open Heart necklace'],
+  ['Tiffany T Smile','ティファニー Tスマイル','Tiffany T Smile necklace'],
+  ['Vivienne Westwood Orb','ヴィヴィアンウエストウッド オーブ ネックレス','Vivienne Westwood Orb pendant necklace'],
+  ['Paul Smith necklace','ポールスミス ネックレス','Paul Smith pendant necklace']
+ ]
+};
+async function suggestSpecificModels(classifier,url,category){
+ const panel=document.getElementById('modelPanel'), list=document.getElementById('modelChoices');
+ list.replaceChildren();panel.classList.remove('show');
+ const candidates=productLibrary[category];if(!candidates)return;
+ const prompts=candidates.map(item=>'a clear product photograph of '+item[2]);
+ const ranked=await classifier(url,prompts);
+ if(!ranked?.length)return;
+ for(const match of ranked.slice(0,4)){
+  const index=prompts.indexOf(match.label);if(index<0)continue;
+  const [english,japanese]=candidates[index];
+  const item=document.createElement('div');item.className='model-item';
+  const info=document.createElement('div');const title=document.createElement('strong');title.textContent=english;
+  const sub=document.createElement('small');sub.textContent=japanese+' · Unverified suggestion';info.append(title,sub);
+  const button=document.createElement('button');button.type='button';button.textContent='USE THIS';
+  button.addEventListener('click',()=>{
+   document.getElementById('details').value=japanese;
+   document.getElementById('modelInput').value=japanese;
+   document.getElementById('featureStatus').textContent='Candidate selected. Verify the exact product or model code before buying.';
+   document.getElementById('identifyStatus').textContent='Selected candidate: '+english+'. Not an authenticated model identification.';
+  });item.append(info,button);list.appendChild(item);
+ }
+ panel.classList.toggle('show',list.children.length>0);
+}
+
 function showCandidates(items){
  const panel=document.getElementById('aiCandidates'), list=document.getElementById('candidateList');
  list.replaceChildren();
@@ -145,7 +238,7 @@ function showCandidates(items){
  }
  panel.classList.toggle('show',list.children.length>0);
 }
-photo.addEventListener('change',()=>{document.getElementById('aiCandidates').classList.remove('show');document.getElementById('featurePanel').hidden=true;lastAnalysis=null;});
+photo.addEventListener('change',()=>{document.getElementById('aiCandidates').classList.remove('show');document.getElementById('featurePanel').hidden=true;document.getElementById('modelPanel').classList.remove('show');lastAnalysis=null;});
 // Estimate prominent colors with a small canvas sample. Backgrounds may skew results.
 async function estimateColor(url){
  const img=new Image();img.src=url;await img.decode();
@@ -180,10 +273,11 @@ document.getElementById('identifyBtn').addEventListener('click', async () => {
  if(!f){status.textContent='Please upload a product photo first.';return;}
  const btn=document.getElementById('identifyBtn');btn.disabled=true;btn.textContent='ANALYZING PHOTO…';
  document.getElementById('aiCandidates').classList.remove('show');
+ document.getElementById('modelPanel').classList.remove('show');
  status.textContent='Loading on-device AI. First use can take a few minutes…';
  try {
   const classifier=await getImageClassifier();
-  status.textContent='Step 1/2: Estimating product category…';
+  status.textContent='Step 1/3: Estimating product category…';
   const labels=productCategories.map(([en])=>'a photo of '+en);
   const output=await classifier(previewUrl,labels);
   if(!output?.length)throw new Error('No category found');
@@ -199,7 +293,7 @@ document.getElementById('identifyBtn').addEventListener('click', async () => {
   try {const c=await estimateColor(previewUrl);if(c)document.getElementById('colorChoice').value=c;}catch(e){console.warn('Color estimation unavailable',e);}
   const brands=brandByCategory[category];
   if(brands){
-   status.textContent='Step 2/2: Comparing possible brands…';
+   status.textContent='Step 2/3: Comparing possible brands…';
    const brandLabels=brands.map(b=>'a product photo of '+b+' '+category);
    brandLabels.push('a product photo of unbranded '+category);
    const brandResults=await classifier(previewUrl,brandLabels);
@@ -211,7 +305,9 @@ document.getElementById('identifyBtn').addEventListener('click', async () => {
   }
   document.getElementById('details').value=category;
   showCandidates(suggestions);
-  status.textContent='AI suggests: '+category+'. Review brand candidates and estimated color, then refine search terms. No exact model verification.';
+  status.textContent='Step 3/3: Comparing product-name candidates…';
+  try{await suggestSpecificModels(classifier,previewUrl,category);}catch(e){console.warn('Model candidate comparison unavailable',e);}
+  status.textContent='AI suggests: '+category+'. Check possible product names below. Exact product/model codes are NOT verified.';
  }catch(err){
   console.error('On-device image recognition failed:',err);
   status.textContent='AI could not analyze this photo. Check your connection/browser, or enter a product description manually.';
