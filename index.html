@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Find Japanese products from a photo with JAPAN FINDER.">
-<title>JAPAN FINDER — Find anything in Japan</title>
+<title>JAPAN FINDER v8 — Find anything in Japan</title>
 <style>
 :root{--ink:#17221e;--muted:#69766f;--line:#e5eae6;--paper:#fbfcfa;--green:#245b46;--mint:#eaf2ed;--white:#fff;--gold:#d7a85b}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -31,7 +31,7 @@ h1 em{font-family:Georgia,serif;font-weight:400;color:var(--green)}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.field label,.field-title{font-size:12px;font-weight:750;display:block;margin-bottom:10px}
 .upload{border:1.5px dashed #bdcfc2;border-radius:15px;min-height:190px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:#fbfdfb;position:relative;overflow:hidden;transition:.2s}
 .upload:hover{border-color:var(--green);background:#f5faf6}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}.upload-inner{padding:20px}.upload-icon{font-size:30px;color:var(--green)}.upload strong{display:block;margin:8px 0 5px;font-size:14px}.upload small{color:var(--muted);font-size:11px}.upload img{max-width:100%;max-height:185px;object-fit:contain}
-textarea,select,input[type=number]{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 13px;font:inherit;font-size:13px;background:white;color:var(--ink);outline:none}
+textarea,select,input[type=number],input[type=text]{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 13px;font:inherit;font-size:13px;background:white;color:var(--ink);outline:none}
 textarea:focus,select:focus,input:focus{border-color:#739985;box-shadow:0 0 0 3px #245b4610}
 textarea{min-height:94px;resize:vertical}.field+.field{margin-top:17px}
 .choices{display:flex;gap:8px}.choice{flex:1;border:1px solid var(--line);background:white;padding:12px 10px;border-radius:11px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted)}.choice.active{border-color:var(--green);background:var(--mint);color:var(--green)}
@@ -43,6 +43,12 @@ textarea{min-height:94px;resize:vertical}.field+.field{margin-top:17px}
 footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:10px}.footer-inner{display:flex;justify-content:space-between;gap:20px}
 .toast{display:none;margin-top:12px;padding:12px;border-radius:10px;background:#fff4df;color:#77551d;font-size:11px;line-height:1.6}.toast.show{display:block}
 @media(max-width:760px){.wrap{padding:0 18px}nav{display:none}.hero{grid-template-columns:1fr;padding:52px 0 30px;gap:30px}.visual{min-height:300px}.form-grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.search-panel{padding:18px}.section{padding-bottom:55px}.footer-inner{flex-direction:column}.section-head{display:block}.section-head p{margin-top:8px}.result-card{flex-wrap:wrap}.result-link{width:100%;text-align:center}}
+ .ai-candidates{display:none;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#f8fbf8}
+ .ai-candidates.show{display:block}.ai-candidates strong{font-size:12px}.candidate-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+ .candidate{background:white;border:1px solid #cdded1;border-radius:99px;padding:9px 12px;color:var(--green);font-size:12px;cursor:pointer}
+ .candidate:hover,.candidate:focus-visible{background:var(--mint);border-color:var(--green)}
+ .ai-note{font-size:11px;color:var(--muted);line-height:1.6;margin:8px 0 0}
+.feature-panel{margin-top:14px;padding:16px;border:1px solid #dce6df;background:#f8fbf8;border-radius:13px}.feature-panel[hidden]{display:none}.feature-panel>strong{font-size:13px}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.feature-grid label{font-size:11px;font-weight:750}.feature-grid select,.feature-grid input{margin-top:6px}.apply-btn{width:100%;background:#245b46;color:#fff;border:0;border-radius:10px;padding:12px;margin-top:12px;font-weight:750;cursor:pointer}.feature-panel .ai-note{margin-top:8px}.version-note{font-size:11px;color:#69766f;margin-top:10px}@media(max-width:760px){.feature-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -56,7 +62,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
  <div class="section-head"><div><div class="eyebrow">Start your search</div><h2>What are you looking for?</h2><p>Upload a photo and tell us what you know. The more details, the better.</p></div></div>
  <div class="search-panel">
   <div class="form-grid">
-   <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint" id="photoHint">Free on-device AI estimates the product category. The image stays in your browser; the AI model is downloaded on first use (may be large).</div><button class="identify-btn" id="identifyBtn" type="button">✦ IDENTIFY PHOTO WITH AI</button><div class="hint" id="identifyStatus" role="status" aria-live="polite">On-device AI is experimental. It suggests a category, not an exact brand or model.</div></div>
+   <div class="field"><label for="photo">1. Product photo</label><label class="upload" for="photo" id="uploadBox"><input id="photo" type="file" accept="image/*"><div class="upload-inner" id="uploadInner"><div class="upload-icon">＋</div><strong>Drop a photo here or browse</strong><small>JPG, PNG or WEBP · Max 10MB</small></div></label><div class="hint" id="photoHint">Free on-device AI estimates the product category. The image stays in your browser; the AI model is downloaded on first use (may be large).</div><button class="identify-btn" id="identifyBtn" type="button">✦ IDENTIFY PHOTO WITH AI</button><div class="hint" id="identifyStatus" role="status" aria-live="polite">On-device AI is experimental. It suggests possible categories and brands, not an exact model.</div><div class="ai-candidates" id="aiCandidates"><strong>Possible search terms — choose one</strong><div class="candidate-list" id="candidateList"></div><p class="ai-note">These are image similarity guesses, not verified logos or brand identifications. You can edit the search words before searching.</p></div><div id="featurePanel" class="feature-panel" hidden><strong>Refine your search</strong><p class="ai-note">Color is estimated from image pixels, not recognized as a product attribute. Check the photo before using it.</p><div class="feature-grid"><label>Color<select id="colorChoice"><option value="">Not sure / skip</option><option value="black">Black</option><option value="white">White</option><option value="gray">Gray</option><option value="blue">Blue</option><option value="red">Red</option><option value="green">Green</option><option value="brown">Brown</option><option value="beige">Beige</option><option value="pink">Pink</option><option value="yellow">Yellow</option></select></label><label>Brand (optional)<input id="brandInput" type="text" maxlength="80" placeholder="e.g. Nike"></label><label>Model / code (optional)<input id="modelInput" type="text" maxlength="100" placeholder="e.g. Air Force 1"></label></div><button class="apply-btn" id="applyFeatures" type="button">BUILD SEARCH TERMS →</button><div class="hint" id="featureStatus" role="status"></div></div></div>
    <div>
     <div class="field"><label for="details">2. Product name or clues</label><textarea id="details" placeholder="Enter the product name, brand, color, or any details you know..."></textarea></div>
     <div class="field"><span class="field-title">3. Product condition</span><div class="choices" id="condition"><button class="choice" data-value="New" type="button">New</button><button class="choice" data-value="Used" type="button">Used</button><button class="choice active" data-value="Both" type="button">Both</button></div></div>
@@ -74,10 +80,11 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 </section>
 <section class="wrap section" id="about" style="padding-top:0"><div style="background:#edf3ee;border-radius:20px;padding:25px 28px"><div class="eyebrow">Our idea</div><h2 style="font-size:23px;margin:10px 0">Japan is full of things worth finding.</h2><p style="font-size:13px;line-height:1.8;color:#58675e;max-width:700px;margin:0">JAPAN FINDER aims to make discovering Japanese products easier for people everywhere — even when all they have is a picture.</p></div></section>
 </main>
-<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>Experimental on-device category recognition. Marketplace links only; no live prices, checkout, or purchases.</span></div></footer>
+<footer><div class="wrap footer-inner"><span>© 2026 JAPAN FINDER — Prototype</span><span>v8 experimental browser AI. Unverified brand/color suggestions; no model identification, live prices, checkout, or purchases.</span></div></footer>
 <script>
 const photo=document.getElementById('photo'), uploadInner=document.getElementById('uploadInner'),toast=document.getElementById('toast');
 let previewUrl=null;
+let lastAnalysis=null;
 photo.addEventListener('change',()=>{
  const f=photo.files&&photo.files[0];if(!f)return;
  if(f.size>10*1024*1024){alert('Please choose an image smaller than 10MB.');photo.value='';return;}
@@ -112,27 +119,102 @@ function getImageClassifier(){
  }
  return imageClassifierPromise;
 }
+// Compare brand descriptions only after classifying the product category.
+// CLIP similarities are NOT probabilities or reliable logo recognition.
+const brandByCategory = {
+ sneakers:['Nike','Adidas','New Balance','ASICS','Puma','Converse','Vans','Reebok','Mizuno','Onitsuka Tiger'],
+ 'leather shoes':['Dr. Martens','Clarks','REGAL','Timberland'],
+ handbag:['Louis Vuitton','Coach','Gucci','Prada','Michael Kors','Kate Spade'],
+ backpack:['The North Face','Porter','Nike','Adidas','Gregory'],
+ wristwatch:['Casio','Seiko','Citizen','G-Shock','Rolex'],
+ headphones:['Sony','Bose','Audio-Technica','JBL','Apple'],
+ 'smartphone':['Apple','Samsung','Sony','Google'],
+ 'camera':['Canon','Nikon','Sony','Fujifilm'],
+ 'jacket':['Nike','Adidas','The North Face','Uniqlo','Patagonia']
+};
+function showCandidates(items){
+ const panel=document.getElementById('aiCandidates'), list=document.getElementById('candidateList');
+ list.replaceChildren();
+ for(const item of [...new Set(items)].slice(0,5)){
+  const button=document.createElement('button');button.type='button';button.className='candidate';
+  button.textContent=item;button.addEventListener('click',()=>{
+   document.getElementById('details').value=item;
+   if(lastAnalysis){const suffix=' '+lastAnalysis.category;document.getElementById('brandInput').value=item.endsWith(suffix)?item.slice(0,-suffix.length):'';}
+   document.getElementById('identifyStatus').textContent='Selected: '+item+'. Review or edit these search words before opening marketplaces.';
+  });list.appendChild(button);
+ }
+ panel.classList.toggle('show',list.children.length>0);
+}
+photo.addEventListener('change',()=>{document.getElementById('aiCandidates').classList.remove('show');document.getElementById('featurePanel').hidden=true;lastAnalysis=null;});
+// Estimate prominent colors with a small canvas sample. Backgrounds may skew results.
+async function estimateColor(url){
+ const img=new Image();img.src=url;await img.decode();
+ const canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;
+ const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,64,64);
+ const data=ctx.getImageData(0,0,64,64).data;const votes=new Map();
+ for(let y=12;y<52;y+=3)for(let x=12;x<52;x+=3){
+  const i=(y*64+x)*4,r=data[i],g=data[i+1],b=data[i+2];if(data[i+3]<200)continue;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b),delta=max-min;
+  let color='';
+  if(max<65)color='black';else if(min>210&&delta<32)color='white';
+  else if(delta<24)color='gray';else if(r>g*1.25&&r>b*1.25)color='red';
+  else if(b>r*1.18&&b>g*1.1)color='blue';else if(g>r*1.18&&g>b*1.05)color='green';
+  else if(r>140&&g>105&&b<125)color='brown';else if(r>190&&g>165&&b>125&&delta<90)color='beige';
+  else if(r>170&&b>120&&g<170)color='pink';else if(r>155&&g>145&&b<110)color='yellow';
+  if(color)votes.set(color,(votes.get(color)||0)+1);
+ }
+ return [...votes].sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+}
+function buildSearchTerms(){
+ if(!lastAnalysis)return;
+ const color=document.getElementById('colorChoice').value;
+ const brand=document.getElementById('brandInput').value.trim();
+ const model=document.getElementById('modelInput').value.trim();
+ const query=[brand,model,color,lastAnalysis.category].filter(Boolean).join(' ');
+ document.getElementById('details').value=query;
+ document.getElementById('featureStatus').textContent='Search terms ready. Review them before searching.';
+}
+document.getElementById('applyFeatures').addEventListener('click',buildSearchTerms);
 document.getElementById('identifyBtn').addEventListener('click', async () => {
  const f=photo.files&&photo.files[0];const status=document.getElementById('identifyStatus');
  if(!f){status.textContent='Please upload a product photo first.';return;}
  const btn=document.getElementById('identifyBtn');btn.disabled=true;btn.textContent='ANALYZING PHOTO…';
- status.textContent='Loading free on-device AI. First use may download a large model and take a while…';
+ document.getElementById('aiCandidates').classList.remove('show');
+ status.textContent='Loading on-device AI. First use can take a few minutes…';
  try {
   const classifier=await getImageClassifier();
-  status.textContent='Analyzing your image on this device…';
+  status.textContent='Step 1/2: Estimating product category…';
   const labels=productCategories.map(([en])=>'a photo of '+en);
   const output=await classifier(previewUrl,labels);
-  if(!output?.length)throw new Error('No category detected. Please enter a description manually.');
-  const best=output[0];
-  const index=labels.indexOf(best.label);
-  if(index<0)throw new Error('No matching category found.');
-  const english=productCategories[index][0];
-  document.getElementById('details').value=english;
-  const pct=Math.round(best.score*100);
-  status.textContent='AI category suggestion: '+english+' (relative match '+pct+'%). Not an exact product ID. Please edit the search words if needed.';
+  if(!output?.length)throw new Error('No category found');
+  const index=labels.indexOf(output[0].label);
+  if(index<0)throw new Error('No category found');
+  const category=productCategories[index][0];
+  let suggestions=[category];
+  lastAnalysis={category};
+  document.getElementById('featurePanel').hidden=false;
+  document.getElementById('brandInput').value='';
+  document.getElementById('modelInput').value='';
+  document.getElementById('colorChoice').value='';
+  try {const c=await estimateColor(previewUrl);if(c)document.getElementById('colorChoice').value=c;}catch(e){console.warn('Color estimation unavailable',e);}
+  const brands=brandByCategory[category];
+  if(brands){
+   status.textContent='Step 2/2: Comparing possible brands…';
+   const brandLabels=brands.map(b=>'a product photo of '+b+' '+category);
+   brandLabels.push('a product photo of unbranded '+category);
+   const brandResults=await classifier(previewUrl,brandLabels);
+   const baseline=brandResults.find(x=>x.label===brandLabels[brandLabels.length-1])?.score??0;
+   // Offer candidates only as hypotheses; do not force a brand into the search box.
+   const possible=brandResults.filter(x=>x.label!==brandLabels[brandLabels.length-1] && x.score>baseline).slice(0,3);
+   suggestions=[category,...possible.map(x=>x.label.replace('a product photo of ','').replace(' '+category,'')+' '+category)];
+   if(possible.length)document.getElementById('brandInput').placeholder='Possibly '+possible[0].label.replace('a product photo of ','').replace(' '+category,'')+' (verify manually)';
+  }
+  document.getElementById('details').value=category;
+  showCandidates(suggestions);
+  status.textContent='AI suggests: '+category+'. Review brand candidates and estimated color, then refine search terms. No exact model verification.';
  }catch(err){
   console.error('On-device image recognition failed:',err);
-  status.textContent='AI could not load or analyze the photo. Check your connection/browser, or enter a product description manually.';
+  status.textContent='AI could not analyze this photo. Check your connection/browser, or enter a product description manually.';
  }finally{btn.disabled=false;btn.textContent='✦ IDENTIFY PHOTO WITH AI';}
 });
 let selected='Both';
@@ -166,3 +248,4 @@ document.getElementById('searchBtn').addEventListener('click',()=>{
 });
 </script>
 </body></html>
+```
