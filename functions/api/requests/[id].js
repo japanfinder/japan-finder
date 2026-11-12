@@ -5,6 +5,6 @@ if(!env.DB)return json({error:'Database unavailable'},503);
 const token=new URL(request.url).searchParams.get('token');if(!token||token.length>150)return json({error:'Unauthorized'},401);
 const record=await env.DB.prepare('SELECT token_hash FROM requests WHERE id=?').bind(params.id).first();
 if(!record||(await hash(token))!==record.token_hash)return json({error:'Unauthorized'},401);
-const {results}=await env.DB.prepare('SELECT client_id AS clientId,status,reason,approved_price AS approvedPrice FROM request_items WHERE request_id=?').bind(params.id).all();
+const {results}=await env.DB.prepare('SELECT client_id AS clientId,status,reason,approved_price AS approvedPrice,domestic_shipping AS domesticShipping,international_shipping AS internationalShipping,service_fee AS serviceFee FROM request_items WHERE request_id=?').bind(params.id).all();
 return json({items:results});
 }
