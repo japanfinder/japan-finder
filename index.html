@@ -99,9 +99,18 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 .jf-cart-item a{color:#176b49}.jf-cart-item strong{display:block}.jf-cart-actions{display:flex;gap:10px;margin-top:8px}.jf-cart-actions button{border:1px solid #cad8cc;background:white;border-radius:8px;padding:6px 10px;cursor:pointer}
 .jf-cart-status{font-size:12px;font-weight:700;margin:7px 0}.jf-cart-status.approved{color:#217547}.jf-cart-status.rejected{color:#b53939}.jf-cart-status.pending{color:#80652c}
 .jf-cart-summary{border-top:1px solid #dbe7dd;padding-top:12px;margin-top:15px}.jf-cart-secondary{border:1px solid #bcd4c3;background:#fff;color:#176b49;padding:11px 14px;border-radius:10px;cursor:pointer}
+
+/* v25 authentication: only additive UI, original layout retained */
+.jf-signin{border:1px solid #c8d9cc;background:#fff;color:#245b46;border-radius:11px;padding:10px 13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.jf-auth-overlay[hidden]{display:none!important}.jf-auth-overlay{position:fixed;inset:0;background:#152c2299;z-index:10002;display:flex;align-items:center;justify-content:center;padding:15px}
+.jf-auth-dialog{width:min(440px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:20px;padding:24px;color:#21352a;box-shadow:0 20px 80px #12281a40}
+.jf-auth-dialog h2{margin:0;color:#245b46}.jf-auth-dialog label{display:block;margin:18px 0 8px;font-weight:650;font-size:13px}.jf-auth-dialog input{width:100%;border:1px solid #cbd9cf;border-radius:10px;padding:13px;font:inherit}
+.jf-auth-dialog button.primary{background:#176b49;color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer;margin-top:14px}.jf-auth-dialog button:disabled{opacity:.5}
+.jf-auth-dialog .subtle{color:#68786d;font-size:12px;line-height:1.6}.jf-auth-dialog .close{float:right;background:#edf3ee;border:0;border-radius:9px;padding:7px 11px;cursor:pointer}
+@media(max-width:680px){.jf-signin{padding:8px;font-size:12px}}
 </style></head>
 <body>
-<header><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><a class="brand" href="#" style="text-decoration:none">JAPAN <span>FINDER</span></a><nav><a href="#how">How it works</a><a href="#search">Find a product</a><a href="#about">About</a></nav><button type="button" id="jfOpenCart" class="jf-cart-trigger" aria-label="Open saved cart">🛒 Cart (<span id="jfCartCount">0</span>)</button><label class="language-switch"><span id="languageLabel">Language</span><select id="uiLanguage" aria-label="Interface language"><option value="en">English</option><option value="ja">日本語</option><option value="zh">简体中文</option><option value="ko">한국어</option><option value="es">Español</option></select></label></div></header>
+<header><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><a class="brand" href="#" style="text-decoration:none">JAPAN <span>FINDER</span></a><nav><a href="#how">How it works</a><a href="#search">Find a product</a><a href="#about">About</a></nav><button type="button" id="jfSignIn" class="jf-signin">Sign in</button><button type="button" id="jfOpenCart" class="jf-cart-trigger" aria-label="Open saved cart">🛒 Cart (<span id="jfCartCount">0</span>)</button><label class="language-switch"><span id="languageLabel">Language</span><select id="uiLanguage" aria-label="Interface language"><option value="en">English</option><option value="ja">日本語</option><option value="zh">简体中文</option><option value="ko">한국어</option><option value="es">Español</option></select></label></div></header>
 <main>
 <section class="wrap hero">
  <div><div class="eyebrow">Your gateway to Japanese finds</div><h1>Find anything<br>in Japan. <em>From a photo.</em></h1><p class="lead">Seen something in Japan but don't know its name or where to buy it? Share a photo. We'll help you track it down — new or pre-loved.</p><div class="pills"><span class="pill">Photo-first search</span><span class="pill">New & used</span><span class="pill">Japan-wide discovery</span></div></div>
@@ -591,6 +600,14 @@ document.getElementById('uiLanguage').addEventListener('change',e=>setLanguage(e
 document.getElementById('noBudget').addEventListener('click',()=>{document.getElementById('budgetAmount').value='';document.getElementById('budgetAmount').setCustomValidity('');});
 setLanguage('en');
 </script>
+<div class="jf-auth-overlay" id="jfAuthOverlay" hidden><section class="jf-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="jfAuthTitle">
+<button type="button" class="close" id="jfAuthClose">✕</button><h2 id="jfAuthTitle">JAPAN FINDER account</h2>
+<p class="subtle">Sign in to sync your saved cart between devices. No password required.</p>
+<div id="jfAuthEmailStep"><label for="jfAuthEmail">Email address</label><input id="jfAuthEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="254"><button type="button" class="primary" id="jfAuthSend">Send 6-digit code</button></div>
+<div id="jfAuthCodeStep" hidden><label for="jfAuthCode">6-digit verification code</label><input id="jfAuthCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="123456"><button type="button" class="primary" id="jfAuthVerify">Verify & sign in</button> <button type="button" id="jfAuthBack">Change email</button><p class="subtle">Code expires in 10 minutes.</p></div>
+<div id="jfAuthLoggedStep" hidden><p id="jfAuthAccountEmail"></p><button type="button" class="primary" id="jfAuthLogout">Sign out</button></div>
+<p class="subtle" id="jfAuthMessage" role="status" aria-live="polite"></p>
+</section></div>
 <div class="jf-cart-overlay" id="jfCartOverlay" hidden>
 <div class="jf-cart-dialog" role="dialog" aria-modal="true" aria-labelledby="jfCartTitle">
 <div class="jf-cart-top"><h2 id="jfCartTitle">🛒 My Cart</h2><button type="button" class="jf-cart-close" id="jfCartClose">✕</button></div>
@@ -606,7 +623,11 @@ setLanguage('en');
 const $=id=>document.getElementById(id),key='jf-v22-cart',requestKey='jf-v22-requests';
 let items=[],requests=[];try{items=JSON.parse(localStorage.getItem(key)||'[]');if(!Array.isArray(items))items=[]}catch(e){items=[]}
 try{requests=JSON.parse(localStorage.getItem(requestKey)||'[]');if(!Array.isArray(requests))requests=[]}catch(e){requests=[]}
-const save=()=>{localStorage.setItem(key,JSON.stringify(items));localStorage.setItem(requestKey,JSON.stringify(requests))};
+let jfLoggedIn=false,jfSyncTimer=null,jfLoading=false;
+const save=()=>{localStorage.setItem(key,JSON.stringify(items));localStorage.setItem(requestKey,JSON.stringify(requests));if(jfLoggedIn&&!jfLoading){clearTimeout(jfSyncTimer);jfSyncTimer=setTimeout(syncDrafts,450)}};
+async function syncDrafts(){if(!jfLoggedIn)return;try{const drafts=items.filter(x=>!x.requestId).map(x=>({id:x.id,url:x.url,name:x.name,price:x.price}));const r=await fetch('/api/account/cart',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:drafts})});if(!r.ok)throw Error('Sync failed');}catch(e){console.warn('JAPAN FINDER cart sync:',e.message)}}
+async function loadCloudCart(){const r=await fetch('/api/account/cart',{cache:'no-store'});if(!r.ok)throw Error('Cart unavailable');const data=await r.json();jfLoading=true;try{const submitted=items.filter(x=>x.requestId);const localDrafts=items.filter(x=>!x.requestId);const remote=data.items.map(x=>({...x,status:'draft',reason:'',approvedPrice:null,domesticShipping:0,internationalShipping:0,serviceFee:0,requestId:null}));const merged=[...submitted,...remote];for(const x of localDrafts)if(!merged.some(y=>y.id===x.id||y.url===x.url))merged.push(x);items=merged;save();render()}finally{jfLoading=false}await syncDrafts()}
+window.jfAccountCart={async signedIn(){jfLoggedIn=true;await loadCloudCart()},signedOut(){clearTimeout(jfSyncTimer);jfLoggedIn=false;items=items.filter(x=>x.requestId);save();render()}};
 function valid(v){try{let u=new URL(v);if(u.protocol!=='https:')return null;let h=u.hostname.toLowerCase();if(!['amazon.co.jp','mercari.com','paypayfleamarket.yahoo.co.jp'].some(d=>h===d||h.endsWith('.'+d)))return null;return u.href}catch(e){return null}}
 function open(){ $('jfCartOverlay').hidden=false;document.body.style.overflow='hidden';render()}
 function close(){ $('jfCartOverlay').hidden=true;document.body.style.overflow=''}
@@ -633,4 +654,21 @@ $('jfRefresh').onclick=async()=>{if(!requests.length){$('jfRequestStatus').textC
 $('jfRequestStatus').textContent='Checking staff decisions…';try{for(const req of requests){const r=await fetch('/api/requests/'+encodeURIComponent(req.id)+'?token='+encodeURIComponent(req.token));if(!r.ok)throw Error('Request lookup failed');const data=await r.json();for(const remote of data.items){const local=items.find(x=>x.id===remote.clientId&&x.requestId===req.id);if(local){local.status=remote.status;local.reason=remote.reason||'';local.approvedPrice=remote.approvedPrice;local.domesticShipping=remote.domesticShipping??0;local.internationalShipping=remote.internationalShipping??0;local.serviceFee=remote.serviceFee??0}}}save();render();$('jfRequestStatus').textContent='Status updated.'}catch(e){$('jfRequestStatus').textContent='Could not refresh: '+e.message}};
 render();
 })();
-</script></body></html>
+</script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),overlay=$('jfAuthOverlay'),message=$('jfAuthMessage');let logged=false;
+const show=()=>{overlay.hidden=false;message.textContent='';document.body.style.overflow='hidden'};
+const hide=()=>{overlay.hidden=true;document.body.style.overflow=''};
+$('jfSignIn').onclick=show;$('jfAuthClose').onclick=hide;overlay.onclick=e=>{if(e.target===overlay)hide()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)hide()});
+function display(email){logged=!!email;$('jfSignIn').textContent=email?'Account':'Sign in';$('jfAuthEmailStep').hidden=!!email;$('jfAuthCodeStep').hidden=true;$('jfAuthLoggedStep').hidden=!email;$('jfAuthAccountEmail').textContent=email||''}
+async function api(url,data){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data||{})});let b;try{b=await r.json()}catch{throw Error('Server response error')}if(!r.ok)throw Error(b.error||'Request failed');return b}
+$('jfAuthSend').onclick=async()=>{const email=$('jfAuthEmail').value.trim().toLowerCase();if(!email||!$('jfAuthEmail').checkValidity()){message.textContent='Enter a valid email address.';return}const btn=$('jfAuthSend');btn.disabled=true;message.textContent='Sending…';try{const b=await api('/api/auth/send',{email});$('jfAuthEmailStep').hidden=true;$('jfAuthCodeStep').hidden=false;message.textContent=b.message||'Check your email.';$('jfAuthCode').focus()}catch(e){message.textContent=e.message}finally{btn.disabled=false}};
+$('jfAuthBack').onclick=()=>{$('jfAuthEmailStep').hidden=false;$('jfAuthCodeStep').hidden=true;message.textContent=''};
+$('jfAuthVerify').onclick=async()=>{const code=$('jfAuthCode').value.trim(),email=$('jfAuthEmail').value.trim().toLowerCase();if(!/^\d{6}$/.test(code)){message.textContent='Enter all 6 digits.';return}const btn=$('jfAuthVerify');btn.disabled=true;message.textContent='Verifying…';try{const b=await api('/api/auth/verify',{email,code});display(b.email);message.textContent='Signed in. Syncing cart…';try{await window.jfAccountCart.signedIn();message.textContent='Signed in. Cart synced.'}catch{message.textContent='Signed in, but cart sync failed. Try refreshing.'}}catch(e){message.textContent=e.message}finally{btn.disabled=false}};
+$('jfAuthLogout').onclick=async()=>{try{await api('/api/auth/logout',{});display(null);window.jfAccountCart.signedOut();message.textContent='Signed out.'}catch(e){message.textContent=e.message}};
+(async()=>{try{const r=await fetch('/api/auth/me',{cache:'no-store'});if(!r.ok)return;const b=await r.json();if(b.loggedIn){display(b.email);await window.jfAccountCart.signedIn()}}catch(e){console.warn('Account status:',e.message)}})();
+})();
+</script>
+</body></html>
