@@ -6,4 +6,4 @@ export async function onRequestPatch({request,env}){if(!await authorized(request
 let b;try{b=await request.json()}catch{return json({error:'Invalid JSON'},400)}
 if(typeof b.id!=='string'||!['pending','approved','rejected','more_info'].includes(b.status)||typeof b.reason!=='string'||b.reason.length>500)return json({error:'Invalid fields'},400);
 if(b.approvedPrice!==null&&b.approvedPrice!==undefined&&(!Number.isSafeInteger(b.approvedPrice)||b.approvedPrice<0||b.approvedPrice>100000000))return json({error:'Invalid confirmed price'},400);
-await env.DB.prepare('UPDATE request_items SET status=?,reason=?,approved_price=?,updated_at=CURRENT_TIMESTAMP WHERE id=?').bind(b.status,b.reason,b.approvedPrice??null,b.id).run();return json({ok:true})}
+await env.DB.prepare('UPDATE request_items SET status=?,reason=?,approved_price=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND status != 'cancelled').bind(b.status,b.reason,b.approvedPrice??null,b.id).run();return json({ok:true})}
