@@ -1,0 +1,9 @@
+const json=(o,s=200)=>new Response(JSON.stringify(o),{status:s,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
+const authorized=async(req,env)=>{const token=req.headers.get('Authorization')?.replace(/^Bearer /,'')||'';if(!env.ADMIN_KEY||token.length!==env.ADMIN_KEY.length)return false;const a=new TextEncoder().encode(token),b=new TextEncoder().encode(env.ADMIN_KEY);let diff=0;for(let i=0;i<a.length;i++)diff|=a[i]^b[i];return diff===0};
+export async function onRequestGet({request,env}){if(!await authorized(request,env))return json({error:'Unauthorized'},401);if(!env.DB)return json({error:'Database unavailable'},503);
+const {results}=await env.DB.prepare("SELECT i.id,i.request_id AS requestId,i.name,i.url,i.listed_price AS listedPrice,i.status,i.reason,i.approved_price AS approvedPrice,r.created_at AS createdAt FROM request_items i JOIN requests r ON i.request_id=r.id ORDER BY r.created_at DESC LIMIT 200").all();return json({items:results})}
+export async function onRequestPatch({request,env}){if(!await authorized(request,env))return json({error:'Unauthorized'},401);if(!env.DB)return json({error:'Database unavailable'},503);
+let b;try{b=await request.json()}catch{return json({error:'Invalid JSON'},400)}
+if(typeof b.id!=='string'||!['pending','approved','rejected','more_info'].includes(b.status)||typeof b.reason!=='string'||b.reason.length>500)return json({error:'Invalid fields'},400);
+if(b.approvedPrice!==null&&b.approvedPrice!==undefined&&(!Number.isSafeInteger(b.approvedPrice)||b.approvedPrice<0||b.approvedPrice>100000000))return json({error:'Invalid confirmed price'},400);
+await env.DB.prepare('UPDATE request_items SET status=?,reason=?,approved_price=?,updated_at=CURRENT_TIMESTAMP WHERE id=?').bind(b.status,b.reason,b.approvedPrice??null,b.id).run();return json({ok:true})}
