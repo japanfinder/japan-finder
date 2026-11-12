@@ -74,9 +74,24 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 #bigTextBtn {font-size:12px}
 #largeTextPanel[hidden] {display:none!important}
 </style>
-</head>
+<style>
+/* v20 cart: isolated styles; original v14 visual design remains unchanged */
+.jf-cart-trigger{border:1px solid #c8d9cc;background:#fff;color:#245b46;border-radius:11px;padding:10px 13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.jf-cart-overlay[hidden]{display:none!important}.jf-cart-overlay{position:fixed;inset:0;background:#152c2299;z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px}
+.jf-cart-dialog{background:#fff;width:min(620px,100%);max-height:90vh;overflow-y:auto;border-radius:20px;padding:23px;box-shadow:0 20px 80px #12281a40}
+.jf-cart-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.jf-cart-top h2{margin:0;color:#245b46}.jf-cart-close{border:0;background:#edf3ee;border-radius:10px;padding:8px 12px;cursor:pointer}
+.jf-cart-dialog label{display:block;font-size:12px;font-weight:700;color:#385646;margin-top:13px}.jf-cart-dialog input,.jf-cart-dialog select{display:block;width:100%;border:1px solid #cbd9cf;border-radius:10px;padding:12px;margin-top:5px;background:#fff;color:#1b3025}
+.jf-cart-primary{background:#176b49;color:white;border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer;margin-top:13px}.jf-cart-primary:disabled{opacity:.5;cursor:not-allowed}
+.jf-cart-note{font-size:12px;color:#68786d;line-height:1.6}.jf-cart-item{border:1px solid #e0e9e1;border-radius:12px;padding:13px;margin-top:12px;overflow-wrap:anywhere}
+.jf-cart-item strong{display:block;margin-bottom:4px}.jf-cart-item a{color:#176b49}.jf-cart-item select{margin:8px 0}.jf-cart-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+.jf-cart-actions button,.jf-cart-actions a{font:inherit;font-size:12px;border:1px solid #c8d9cc;background:#fff;color:#245b46;border-radius:9px;padding:8px;text-decoration:none;cursor:pointer}
+.jf-cart-badge{display:inline-block;font-size:11px;border-radius:20px;padding:4px 9px;background:#edf3ee;color:#345b42}
+.jf-cart-badge.sold{background:#fff0ef;color:#a33232}.jf-cart-badge.available{background:#e6f4e9;color:#216a3d}
+.jf-cart-quote{background:#f5f9f5;border-radius:12px;padding:14px;margin-top:16px}.jf-cart-help{border-top:1px solid #e0e9e1;margin-top:18px;padding-top:12px}
+.jf-save-search{font-size:12px;border:1px solid #bfd5c5;background:#fff;color:#176b49;border-radius:10px;padding:9px 11px;cursor:pointer}
+</style></head>
 <body>
-<header><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><a class="brand" href="#" style="text-decoration:none">JAPAN <span>FINDER</span></a><nav><a href="#how">How it works</a><a href="#search">Find a product</a><a href="#about">About</a></nav><label class="language-switch"><span id="languageLabel">Language</span><select id="uiLanguage" aria-label="Interface language"><option value="en">English</option><option value="ja">日本語</option><option value="zh">简体中文</option><option value="ko">한국어</option><option value="es">Español</option></select></label></div></header>
+<header><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><a class="brand" href="#" style="text-decoration:none">JAPAN <span>FINDER</span></a><nav><a href="#how">How it works</a><a href="#search">Find a product</a><a href="#about">About</a></nav><button type="button" id="jfOpenCart" class="jf-cart-trigger" aria-label="Open saved cart">🛒 Cart (<span id="jfCartCount">0</span>)</button><label class="language-switch"><span id="languageLabel">Language</span><select id="uiLanguage" aria-label="Interface language"><option value="en">English</option><option value="ja">日本語</option><option value="zh">简体中文</option><option value="ko">한국어</option><option value="es">Español</option></select></label></div></header>
 <main>
 <section class="wrap hero">
  <div><div class="eyebrow">Your gateway to Japanese finds</div><h1>Find anything<br>in Japan. <em>From a photo.</em></h1><p class="lead">Seen something in Japan but don't know its name or where to buy it? Share a photo. We'll help you track it down — new or pre-loved.</p><div class="pills"><span class="pill">Photo-first search</span><span class="pill">New & used</span><span class="pill">Japan-wide discovery</span></div></div>
@@ -546,7 +561,7 @@ document.getElementById('searchBtn').addEventListener('click',()=>{
   const desc=document.createElement('p');desc.textContent=o.label+' · Search results open on the marketplace website.';
   info.append(title,desc);
   const link=document.createElement('a');link.className='result-link';link.href=o.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='SEARCH ↗';
-  card.append(icon,info,link);list.appendChild(card);
+  const save=document.createElement('button');save.type='button';save.className='jf-save-search';save.textContent='SAVE LINK +';save.addEventListener('click',()=>window.jfAddLink({url:o.url,name:query+' · '+o.name,store:o.name,condition:o.label,price:''}));card.append(icon,info,link,save);list.appendChild(card);
  }
  const amount=document.getElementById('budgetAmount').value;
  const budget=amount?'¥'+Number(amount).toLocaleString('ja-JP'):i18n[document.getElementById('uiLanguage').value].noLimit;
@@ -566,4 +581,69 @@ document.getElementById('uiLanguage').addEventListener('change',e=>setLanguage(e
 document.getElementById('noBudget').addEventListener('click',()=>{document.getElementById('budgetAmount').value='';document.getElementById('budgetAmount').setCustomValidity('');});
 setLanguage('en');
 </script>
-</body></html>
+<div class="jf-cart-overlay" id="jfCartOverlay" hidden>
+<div class="jf-cart-dialog" role="dialog" aria-modal="true" aria-labelledby="jfCartTitle">
+<div class="jf-cart-top"><h2 id="jfCartTitle">🛒 My Cart</h2><button type="button" class="jf-cart-close" id="jfCartClose" aria-label="Close cart">✕</button></div>
+<p class="jf-cart-note">Save product listing links from Amazon Japan, Mercari, or Yahoo! Flea Market. This is a saved-links cart, not a checkout.</p>
+<form id="jfCartForm">
+<label>Product listing URL<input id="jfUrl" type="url" placeholder="https://jp.mercari.com/item/..." required></label>
+<label>Product name<input id="jfName" maxlength="140" placeholder="e.g. Nike Air Force 1" required></label>
+<label>Listed price in JPY (optional)<input id="jfPrice" type="number" min="0" max="100000000" step="1" placeholder="e.g. 6500"></label>
+<button class="jf-cart-primary" type="submit">+ Add to cart</button>
+</form>
+<div class="jf-cart-help"><strong>Saved items</strong><p class="jf-cart-note" id="jfCartNotice" role="status">Stock is not checked automatically. Always verify on the original store.</p><div id="jfCartItems"></div></div>
+<div class="jf-cart-quote"><strong id="jfCartTotal">Listed total (unverified): ¥0</strong><p class="jf-cart-note">Prices are user-entered and may change. Shipping, taxes and service fees are not included. No purchase or payment is processed here.</p><button class="jf-cart-primary" id="jfQuote" type="button">Preview purchase request</button><p class="jf-cart-note" id="jfQuoteMessage" role="status"></p></div>
+</div></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id), key='japanfinder-v20-cart';
+let items=[];
+try{const parsed=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(parsed))items=parsed.filter(x=>x&&typeof x.url==='string').slice(0,100)}catch(e){}
+function store(){try{localStorage.setItem(key,JSON.stringify(items))}catch(e){$('jfCartNotice').textContent='Storage is unavailable; items may not persist after closing this tab.'}}
+function validateUrl(value){try{const u=new URL(value);if(u.protocol!=='https:')return null;const host=u.hostname.toLowerCase();const allowed=['amazon.co.jp','mercari.com','paypayfleamarket.yahoo.co.jp'];if(!allowed.some(h=>host===h||host.endsWith('.'+h)))return null;return u.href}catch(e){return null}}
+function storeName(url){const h=new URL(url).hostname;return h.includes('amazon')?'Amazon Japan':h.includes('mercari')?'Mercari':'Yahoo! Flea Market'}
+function open(){ $('jfCartOverlay').hidden=false;render();$('jfUrl').focus();document.body.style.overflow='hidden'}
+function close(){ $('jfCartOverlay').hidden=true;document.body.style.overflow=''}
+$('jfOpenCart').addEventListener('click',open);$('jfCartClose').addEventListener('click',close);
+$('jfCartOverlay').addEventListener('click',e=>{if(e.target===$('jfCartOverlay'))close()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('jfCartOverlay').hidden)close()});
+function add(v){const url=validateUrl(v.url);if(!url){$('jfCartNotice').textContent='Please use a valid Amazon Japan, Mercari, or Yahoo! Flea Market HTTPS URL.';open();return}
+if(items.some(x=>x.url===url)){$('jfCartNotice').textContent='This link is already in your cart.';open();return}
+const price=v.price===''?null:Number(v.price);
+items.unshift({id:String(Date.now())+'-'+Math.random().toString(36).slice(2),url,name:String(v.name||'Saved product').slice(0,140),price:Number.isSafeInteger(price)&&price>=0?price:null,store:storeName(url),status:'unverified',checkedAt:null});
+store();open();$('jfCartNotice').textContent='Link saved. Availability has NOT been checked.'}
+window.jfAddLink=add;
+$('jfCartForm').addEventListener('submit',e=>{e.preventDefault();const url=$('jfUrl').value;const name=$('jfName').value.trim();if(!name)return;add({url,name,price:$('jfPrice').value});$('jfCartForm').reset()});
+const statusLabels={unverified:'Not verified',checking:'Checking',available:'Available (last checked)',sold:'Sold out (confirmed)'};
+function render(){
+$('jfCartCount').textContent=items.length;const root=$('jfCartItems');root.replaceChildren();
+if(!items.length){const p=document.createElement('p');p.className='jf-cart-note';p.textContent='No saved links yet. Paste a listing URL above or save a marketplace search link.';root.append(p)}
+let total=0;let priced=0;let blocked=0;
+for(const item of items){
+const div=document.createElement('div');div.className='jf-cart-item';
+const title=document.createElement('strong');title.textContent=item.name;
+const sub=document.createElement('div');sub.className='jf-cart-note';sub.textContent=item.store+' · '+(item.price===null?'Price not entered':'¥'+item.price.toLocaleString('ja-JP'));
+const badge=document.createElement('span');badge.className='jf-cart-badge '+item.status;badge.textContent=statusLabels[item.status]||statusLabels.unverified;
+const time=document.createElement('p');time.className='jf-cart-note';time.textContent=item.checkedAt?'Manually checked: '+new Date(item.checkedAt).toLocaleString():'No availability check recorded';
+const select=document.createElement('select');select.setAttribute('aria-label','Availability status for '+item.name);
+for(const [v,label] of Object.entries(statusLabels)){const op=document.createElement('option');op.value=v;op.textContent=label;select.append(op)}select.value=item.status;
+select.addEventListener('change',()=>{item.status=select.value;item.checkedAt=(select.value==='unverified'||select.value==='checking')?null:new Date().toISOString();store();render()});
+const actions=document.createElement('div');actions.className='jf-cart-actions';
+const visit=document.createElement('a');visit.href=item.url;visit.target='_blank';visit.rel='noopener noreferrer';visit.textContent='Open original listing ↗';
+const similar=document.createElement('a');similar.href='https://jp.mercari.com/search?keyword='+encodeURIComponent(item.name);similar.target='_blank';similar.rel='noopener noreferrer';similar.textContent='Find similar ↗';
+const remove=document.createElement('button');remove.type='button';remove.textContent='Remove';remove.onclick=()=>{items=items.filter(x=>x.id!==item.id);store();render()};
+actions.append(visit,similar,remove);div.append(title,sub,badge,time,select,actions);root.append(div);
+if(item.status==='sold')blocked++;
+else if(item.price!==null){total+=item.price;priced++}
+}
+$('jfCartTotal').textContent='Listed subtotal (excluding sold out): ¥'+total.toLocaleString('ja-JP')+(priced?'':' · no prices entered');
+$('jfQuote').disabled=items.length===0||blocked===items.length;
+}
+$('jfQuote').addEventListener('click',()=>{
+const active=items.filter(x=>x.status!=='sold');const unverified=active.filter(x=>x.status!=='available').length;
+$('jfQuoteMessage').textContent='Demo request only: '+active.length+' saved item(s), '+unverified+' without a confirmed recent check. No request has been sent, and no payment or purchase has been made. Final availability must be checked by the operator before a quote.';
+});
+render();
+})();
+</script></body></html>
